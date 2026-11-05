@@ -26,4 +26,9 @@ public class Arma extends Equipamiento{
 		
 	}
 
+	@Override
+	public String toString() {
+		return "Arma: " + super.getNombre() + " - Daño extra: " + dañoExtra;
+	}
+
 }

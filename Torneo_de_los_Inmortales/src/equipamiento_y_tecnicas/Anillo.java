@@ -25,5 +25,8 @@ public class Anillo extends Equipamiento{
 		
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Anillo: " + super.getNombre() + " - Energía extra: " + energiaExtra;
+	}
 }
