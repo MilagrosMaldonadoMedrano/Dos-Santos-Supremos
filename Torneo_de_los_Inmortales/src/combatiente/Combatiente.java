@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import efectos.EfectoTemporal;
-
 import equipamiento_y_tecnicas.Equipamiento;
 import equipamiento_y_tecnicas.Tecnica;
 
@@ -170,6 +169,33 @@ public abstract class Combatiente {
 	public void procesarEfectosTurno(){
 		for (EfectoTemporal e: efectosActivos){
 			e.aplicarPorTurno(this);
+		}
+	}
+
+	public void limpiarEfectosTemporales(){
+		efectosActivos.clear();
+	}
+
+	//------------------------------------------------------------------------
+	//----------------------tecnicas------------------------------------------
+
+	public void usarTecnica(Tecnica tecnica, Combatiente objetivo){
+		Integer usosActuales = usosPorTecnica.getOrDefault(tecnica, null);
+
+		if(usosActuales == null)
+			throw new IllegalStateException(nombre + " no conoce la tecnica: " + tecnica.getNombre());
+
+
+		if(usosActuales <= 0)
+			throw new IllegalStateException(nombre + " alcanzo el limite de usos de la tecnica: " + tecnica.getNombre());
+
+		tecnica.realizar(this, objetivo);
+		usosPorTecnica.put(tecnica, usosActuales - 1);
+	}
+
+	public void aprenderTecnicas(List<Tecnica> tecnicas){
+		for(Tecnica tec: tecnicas){
+			usosPorTecnica.put(tec, USOS_POR_TECNICA);
 		}
 	}
 

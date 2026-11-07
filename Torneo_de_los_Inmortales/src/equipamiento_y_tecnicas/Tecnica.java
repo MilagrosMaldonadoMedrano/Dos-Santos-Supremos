@@ -1,10 +1,12 @@
 package equipamiento_y_tecnicas;
 
+import java.util.Objects;
+
 import combatiente.Combatiente;
 import efectos.Efecto;
 
 public abstract class Tecnica {
-    private String nombre;
+	private String nombre;
     private int costoEnergia;
     private TipoTecnica tipo;
     protected Efecto efecto;
@@ -28,6 +30,31 @@ public abstract class Tecnica {
     	return tipo;
     }
     
-    public abstract void realizar(Combatiente ejecutor, Combatiente objetivo);
+    public void realizar(Combatiente ejecutor, Combatiente objetivo) {
+
+		if(ejecutor.getEnergiaActual() < getCostoEnergia())
+			throw new IllegalStateException(ejecutor.getNombre() + " no tiene suficiente energia para usar la tecnica: " + this.nombre);
+
+		ejecutor.gastarEnergia(getCostoEnergia());
+
+		efecto.aplicarEfecto(tipo == TipoTecnica.OFENSIVA ? objetivo : ejecutor);
+	}
+    
+    @Override
+	public int hashCode() {
+		return Objects.hash(nombre);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Tecnica other = (Tecnica) obj;
+		return Objects.equals(nombre, other.nombre);
+	}
 }
 
