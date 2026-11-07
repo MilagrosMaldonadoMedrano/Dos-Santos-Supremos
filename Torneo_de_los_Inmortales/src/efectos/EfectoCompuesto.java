@@ -10,7 +10,7 @@ public class EfectoCompuesto implements Efecto{
 	private List<Efecto> efectos;
 	
 	public EfectoCompuesto () {
-		efectos = new ArrayList<Efecto>();
+		efectos = new ArrayList<Efecto>(); //uso un array porque solo vamos a agregar.
 	}
 	
 	public void agregar(Efecto efecto) {
@@ -20,9 +20,9 @@ public class EfectoCompuesto implements Efecto{
 	//composite
 	
 	@Override
-	public void aplicarEfecto(Combatiente ejecutor, Combatiente objetivo) {
+	public void aplicarEfecto(Combatiente afectado) {
 		for (Efecto e : efectos) {
-			e.aplicarEfecto(ejecutor, objetivo);
+			e.aplicarEfecto(afectado);
 		}
 	}
 }

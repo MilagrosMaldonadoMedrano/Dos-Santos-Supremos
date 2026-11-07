@@ -10,7 +10,7 @@ public class Daño implements Efecto{
 	}
 	
 	@Override
-	public void aplicarEfecto(Combatiente ejecutor, Combatiente objetivo) {
-		
+	public void aplicarEfecto(Combatiente afectado) {
+		afectado.recibirDanio(cantidad);
 	}
 }
