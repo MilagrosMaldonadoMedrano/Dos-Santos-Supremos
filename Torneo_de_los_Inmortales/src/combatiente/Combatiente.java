@@ -1,9 +1,15 @@
 
 package combatiente;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+import efectos.EfectoTemporal;
 import equipamiento_y_tecnicas.Equipamiento;
+import equipamiento_y_tecnicas.Tecnica;
 
 
 public abstract class Combatiente {
@@ -25,10 +31,9 @@ public abstract class Combatiente {
 	private int reduccionDefensiva;  // lo activa una tecnica defensiva
 	private List<Equipamiento> equipamiento;
 	private EstadoCombatiente estado;
-	//Tecnicas
-	//usos por tecnicas
+	private Map<Tecnica, Integer> usosPorTecnica;
 	//estado del combatiente
-	//efectos activos
+	private List<EfectoTemporal> efectosActivos;
 	//criterio de accion criterio;
 	
 	
@@ -42,6 +47,9 @@ public abstract class Combatiente {
 		this.energiaActual=ENERGIA_INICIAL;
 		
 		this.estado = new Preparado();
+
+		this.usosPorTecnica = new HashMap<>();
+		this.efectosActivos = new LinkedList<EfectoTemporal>();
 	}
 	
 	
@@ -55,6 +63,9 @@ public abstract class Combatiente {
 	}
 	public int getEnergiaActual() {
 		return energiaActual;
+	}
+	public void setReduccionDefensiva(int reduccion){
+		reduccion = reduccionDefensiva;
 	}
 	public void setEnergiaActual(int energiaActual) {
 		this.energiaActual = energiaActual;
@@ -142,13 +153,52 @@ public abstract class Combatiente {
 		energiaActual -= calcularCostoEnergia(costoBase);
 	}
 
-	public void recuperarEnergia(int cantidad) {
-		validarPositivo(cantidad);
-		if (puedeActuar()) { // solo los que estan en pie
-			energiaActual = Math.min(energiaMaxima, energiaActual + cantidad);
-		}
+
+	public void perderEnergia(int cantidad) {
+		// 0 si le quitan mas energia de la que tiene
+		energiaActual = Math.max(0, energiaActual - Math.abs(cantidad));
 	}
 	
+	//------------------------------------------------------------------------
+	//----------------------efectos-------------------------------------------
+
+	public void agregarEfectoTemporal(EfectoTemporal e){
+		efectosActivos.add(e);
+	}
+
+	public void procesarEfectosTurno(){
+		for (EfectoTemporal e: efectosActivos){
+			e.aplicarPorTurno(this);
+		}
+	}
+
+	public void limpiarEfectosTemporales(){
+		efectosActivos.clear();
+	}
+
+	//------------------------------------------------------------------------
+	//----------------------tecnicas------------------------------------------
+
+	public void usarTecnica(Tecnica tecnica, Combatiente objetivo){
+		Integer usosActuales = usosPorTecnica.getOrDefault(tecnica, null);
+
+		if(usosActuales == null)
+			throw new IllegalStateException(nombre + " no conoce la tecnica: " + tecnica.getNombre());
+
+
+		if(usosActuales <= 0)
+			throw new IllegalStateException(nombre + " alcanzo el limite de usos de la tecnica: " + tecnica.getNombre());
+
+		tecnica.realizar(this, objetivo);
+		usosPorTecnica.put(tecnica, usosActuales - 1);
+	}
+
+	public void aprenderTecnicas(List<Tecnica> tecnicas){
+		for(Tecnica tec: tecnicas){
+			usosPorTecnica.put(tec, USOS_POR_TECNICA);
+		}
+	}
+
 	//------------------------------------------------------------------------
 	//----------------------State---------------------------------------------
 	void cambiarEstado(EstadoCombatiente nuevo) {

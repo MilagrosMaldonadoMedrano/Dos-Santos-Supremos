@@ -24,4 +24,9 @@ public class Armadura extends Equipamiento{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String toString() {
+		return "Armadura: " + super.getNombre() + " - Armadura extra: " + armaduraExtra;
+	}
 }

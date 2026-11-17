@@ -24,5 +24,9 @@ public class Sello extends Equipamiento{
 		// TODO Auto-generated method stub
 		
 	}
-
+	///agregar un toString que muestre el nombre del sello y la vida extra que da
+	@Override
+	public String toString() {
+		return "Sello: " + super.getNombre() + " - Vida extra: " + vidaExtra;
+	}
 }
