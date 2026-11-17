@@ -14,17 +14,17 @@ public abstract class Combatiente {
     public static final int USOS_POR_TECNICA = 5;
     public static final int DANIO_ATAQUE_BASICO = 10;
 	
-	int identificador;
-	String nombre;
-	int vidaMaxima;	//pude ser mayor a la vida inicial!
-	int vidaActual;
-	int energiaMaxima;
-	int energiaActual;
+    private final int identificador;
+    private String nombre;
+    private int vidaMaxima;	//pude ser mayor a la vida inicial!
+    private int vidaActual;
+    private int energiaMaxima;
+    private int energiaActual;
 	private int danioExtra;          // lo suman las armas
 	private int reduccionEquipo;     // lo suman las armaduras
 	private int reduccionDefensiva;  // lo activa una tecnica defensiva
-	List<Equipamiento> equipamiento;
-	EstadoCombatiente estado;
+	private List<Equipamiento> equipamiento;
+	private EstadoCombatiente estado;
 	//Tecnicas
 	//usos por tecnicas
 	//estado del combatiente
@@ -101,7 +101,7 @@ public abstract class Combatiente {
 			throw new IllegalArgumentException("El daño no puede ser negativo");
 		}
 		int danioFinal = this.calcularDanioRecibido(danio) - this.reduccionEquipo - this.reduccionDefensiva;
-		estado.recibirDanio(this, danioFinal);
+		estado.recibirDanio(this, Math.max(0, danioFinal));  
 		
 	}
 	
