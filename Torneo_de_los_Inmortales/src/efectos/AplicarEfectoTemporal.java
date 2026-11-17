@@ -10,7 +10,7 @@ public class AplicarEfectoTemporal implements Efecto{
     }
 
 	@Override
-	public void aplicarEfecto(Combatiente afectado) {
+	public void aplicarEfecto(Combatiente ejecutor, Combatiente afectado) {
         EfectoTemporal copia = prototipo.copiar();
 		afectado.agregarEfectoTemporal(copia);
 	}   

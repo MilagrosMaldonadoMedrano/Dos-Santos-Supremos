@@ -5,25 +5,24 @@ import combatiente.Combatiente;
 public class Anillo extends Equipamiento{
 	private int energiaExtra;
 	
-	public Anillo(int energiaAumentada) {
-		energiaExtra = energiaAumentada;
+	public Anillo(String nombre, int energiaExtra) {
+		super(nombre);
+		if (energiaExtra <= 0) throw new IllegalArgumentException("La energía extra debe ser positiva");
+		this.energiaExtra = energiaExtra;
 	}
+	public Categoria getCategoria() { 
+		return Categoria.ANILLO; }
+	
+	public void aplicarEfecto(Combatiente c) { 
+		c.modificarEnergiaMaxima(energiaExtra); }   // más energía máxima
+	
+	public void quitarEfecto(Combatiente c)  { 
+		c.modificarEnergiaMaxima(-energiaExtra); }
 
 	public int getEnergiaExtra() {
 		return energiaExtra;
 	}
 
-	@Override
-	public void aplicarEfecto(Combatiente c) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void quitarEfecto(Combatiente c) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public String toString() {

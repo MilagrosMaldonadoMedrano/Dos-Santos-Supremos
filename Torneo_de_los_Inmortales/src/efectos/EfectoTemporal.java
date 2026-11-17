@@ -24,7 +24,7 @@ public abstract class EfectoTemporal {
 
 	protected abstract void ejecutarEfecto(Combatiente afectado);
 
-	private boolean expiro(){
+	public boolean expiro(){
 		return  turnosRestantes <= 0;
 	}
 

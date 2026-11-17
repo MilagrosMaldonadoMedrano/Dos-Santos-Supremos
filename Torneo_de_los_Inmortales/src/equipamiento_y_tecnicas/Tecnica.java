@@ -31,14 +31,15 @@ public abstract class Tecnica {
     }
     
     public void realizar(Combatiente ejecutor, Combatiente objetivo) {
-
-		if(ejecutor.getEnergiaActual() < getCostoEnergia())
-			throw new IllegalStateException(ejecutor.getNombre() + " no tiene suficiente energia para usar la tecnica: " + this.nombre);
-
-		ejecutor.gastarEnergia(getCostoEnergia());
-
-		efecto.aplicarEfecto(tipo == TipoTecnica.OFENSIVA ? objetivo : ejecutor);
-	}
+    	// se decide primero a quienafecta y se valida todo ANTES De cobrar la energia
+    	Combatiente afectado = (tipo == TipoTecnica.OFENSIVA) ? objetivo : ejecutor;
+    	if (!afectado.puedeSerObjetivo())
+    		throw new IllegalStateException(afectado.getNombre() + " no puede ser objetivo");
+    	if (!ejecutor.tieneEnergiaPara(getCostoEnergia()))
+    		throw new IllegalStateException(ejecutor.getNombre() + " no tiene suficiente energia para usar la tecnica: " + nombre);
+    	ejecutor.gastarEnergia(getCostoEnergia());
+    	efecto.aplicarEfecto(ejecutor, afectado);
+    }
     
     @Override
 	public int hashCode() {

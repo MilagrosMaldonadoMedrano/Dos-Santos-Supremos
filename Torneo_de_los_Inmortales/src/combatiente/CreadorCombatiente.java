@@ -1,4 +1,7 @@
 package combatiente;
+import escuela.Escuela;
+
+
 
 public class CreadorCombatiente {
 	public static final String CULTIVADOR = "Cultivador de la Espada";
@@ -7,9 +10,10 @@ public class CreadorCombatiente {
 
 	private int proximoId = 1;
 
-	public Combatiente crear(String tipo, String nombre) {
+	public Combatiente crear(String tipo, String nombre, Escuela escuela) {
 		Combatiente nuevo = instanciar(tipo, proximoId, nombre);
 		proximoId++;
+		escuela.preparar(nuevo);   // le enseña las tecnicas y le equipa las piezas
 		return nuevo;
 	}
 

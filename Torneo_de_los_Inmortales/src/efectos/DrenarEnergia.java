@@ -10,7 +10,7 @@ public class DrenarEnergia implements Efecto{
 	}
 	
 	@Override
-	public void aplicarEfecto(Combatiente afectado) {
+	public void aplicarEfecto(Combatiente ejecutor, Combatiente afectado) {
 		afectado.perderEnergia(cantidad);
 	}
 

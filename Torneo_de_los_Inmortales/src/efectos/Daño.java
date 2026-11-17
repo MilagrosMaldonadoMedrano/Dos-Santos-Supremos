@@ -9,8 +9,14 @@ public class Daño implements Efecto{
 		this.cantidad = cantidad;
 	}
 	
+	
+	
+	/*
+	 * le sume el ejecutor ya que con este calculo cuanto danio hace con la tecnica 
+	 */
+	
 	@Override
-	public void aplicarEfecto(Combatiente afectado) {
-		afectado.recibirDanio(cantidad);
+	public void aplicarEfecto(Combatiente ejecutor, Combatiente afectado) {
+				afectado.recibirDanio(ejecutor.infligirDanio(cantidad));
 	}
 }

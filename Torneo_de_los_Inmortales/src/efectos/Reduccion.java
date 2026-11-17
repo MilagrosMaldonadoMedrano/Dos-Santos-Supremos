@@ -8,8 +8,7 @@ public class Reduccion implements Efecto{
 		this.reduccion = reduccion;
 	}
 	
-	@Override
-	public void aplicarEfecto(Combatiente afectado) {
-		afectado.setReduccionDefensiva(reduccion);
+	public void aplicarEfecto(Combatiente ejecutor, Combatiente afectado) {
+		afectado.activarDefensa(reduccion);
 	}
 }

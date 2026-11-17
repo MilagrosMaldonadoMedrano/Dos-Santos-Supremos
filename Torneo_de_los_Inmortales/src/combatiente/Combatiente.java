@@ -1,9 +1,14 @@
 
 package combatiente;
-
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,25 +25,29 @@ public abstract class Combatiente {
     public static final int USOS_POR_TECNICA = 5;
     public static final int DANIO_ATAQUE_BASICO = 10;
 	
-    private final int identificador;
-    private String nombre;
+    private final int identificador; //ideentificador unico e inmutable
+    private final String nombre;
     private int vidaMaxima;	//pude ser mayor a la vida inicial!
     private int vidaActual;
     private int energiaMaxima;
     private int energiaActual;
-	private int danioExtra;          // lo suman las armas
-	private int reduccionEquipo;     // lo suman las armaduras
-	private int reduccionDefensiva;  // lo activa una tecnica defensiva
-	private List<Equipamiento> equipamiento;
-	private EstadoCombatiente estado;
+    private int danio = DANIO_ATAQUE_BASICO; //arranca en 10 y lo suben las armas
+    private int reduccionDanio; // la suman la armadura y el muro
+    private int defensaActiva;  //cuanto sumo la tecnica defensiva, se saca al final del combate
+    private List<Equipamiento> equipamiento = new ArrayList<>();
+	
+	private EstadoCombatiente estado; //patron State, el combatiente tiene un estado que le indica que pude o no jacer
 	private Map<Tecnica, Integer> usosPorTecnica;
-	//estado del combatiente
 	private List<EfectoTemporal> efectosActivos;
-	//criterio de accion criterio;
+	private CriterioDeAccion criterio = new CriterioPorDefecto();
 	
 	
 	
-	public Combatiente(int identificador,String nombre) {
+	public Combatiente(int identificador,String nombre){
+		if ((nombre == null || nombre.isBlank()) ){
+			throw new IllegalArgumentException("Nombre vacío");
+		}
+			
 		this.identificador=identificador;
 		this.nombre=nombre;
 		this.vidaMaxima=VIDA_INICIAL;
@@ -48,27 +57,18 @@ public abstract class Combatiente {
 		
 		this.estado = new Preparado();
 
-		this.usosPorTecnica = new HashMap<>();
+		this.usosPorTecnica = new LinkedHashMap<>();
 		this.efectosActivos = new LinkedList<EfectoTemporal>();
 	}
 	
 	
 	
-	
+	//------------------------------------------------------------------------
 	public int getVidaActual() {
 		return vidaActual;
 	}
-	public void setVidaActual(int vidaActual) {
-		this.vidaActual = vidaActual;
-	}
 	public int getEnergiaActual() {
 		return energiaActual;
-	}
-	public void setReduccionDefensiva(int reduccion){
-		reduccion = reduccionDefensiva;
-	}
-	public void setEnergiaActual(int energiaActual) {
-		this.energiaActual = energiaActual;
 	}
 	public int getIdentificador() {
 		return identificador;
@@ -82,6 +82,8 @@ public abstract class Combatiente {
 	public int getEnergiaMaxima() {
 		return energiaMaxima;
 	}
+	//------------------------------------------------------------------------
+	
 	
 	
 	//--------------estos los sobreescriben los tipos de combatientes---------
@@ -96,22 +98,21 @@ public abstract class Combatiente {
 	protected int calcularCostoEnergia(int energiaBase) {
 		return energiaBase;
 	}
-	
-	
-	
 	//------------------------------------------------------------------------
+	
+	
+	
 	//---------------------danio----------------------------------------------
 	
-	
-	public int infligirDanio(int base) {
-		return calcularDanioAtaque(base + danioExtra);
-	}
+	//lo usan las tecnicas
+	public int infligirDanio(int danioTecnica) { 
+		return calcularDanioAtaque(danioTecnica); }
 	
 	public void recibirDanio(int danio) {
 		if(danio <0) {
 			throw new IllegalArgumentException("El daño no puede ser negativo");
 		}
-		int danioFinal = this.calcularDanioRecibido(danio) - this.reduccionEquipo - this.reduccionDefensiva;
+		int danioFinal = calcularDanioRecibido(danio) - reduccionDanio; 
 		estado.recibirDanio(this, Math.max(0, danioFinal));  
 		
 	}
@@ -128,7 +129,7 @@ public abstract class Combatiente {
 		if (!rival.puedeSerObjetivo()) {
 			throw new IllegalStateException(rival.getNombre() + " no puede ser objetivo.");
 		}
-		rival.recibirDanio(infligirDanio(DANIO_ATAQUE_BASICO));
+		rival.recibirDanio(calcularDanioAtaque(this.danio)); 
 	}
 	
 	//------------------------------------------------------------------------
@@ -160,16 +161,24 @@ public abstract class Combatiente {
 	}
 	
 	//------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
 	//----------------------efectos-------------------------------------------
 
 	public void agregarEfectoTemporal(EfectoTemporal e){
 		efectosActivos.add(e);
 	}
 
-	public void procesarEfectosTurno(){
-		for (EfectoTemporal e: efectosActivos){
+	public void procesarEfectosTurno() {
+		for (EfectoTemporal e : efectosActivos) {
+			if (!puedeActuar()) break;           // si cayó, no sigue
 			e.aplicarPorTurno(this);
 		}
+		efectosActivos.removeIf(EfectoTemporal::expiro);
 	}
 
 	public void limpiarEfectosTemporales(){
@@ -182,6 +191,9 @@ public abstract class Combatiente {
 	public void usarTecnica(Tecnica tecnica, Combatiente objetivo){
 		Integer usosActuales = usosPorTecnica.getOrDefault(tecnica, null);
 
+		if (!puedeActuar()) 
+			throw new IllegalStateException(nombre + " no puede actuar");
+		
 		if(usosActuales == null)
 			throw new IllegalStateException(nombre + " no conoce la tecnica: " + tecnica.getNombre());
 
@@ -212,15 +224,79 @@ public abstract class Combatiente {
     public boolean puedeSerObjetivo(){
     	return estado.puedeSerObjetivo(); 
     }
-	
-	//------------------------------------------------------------------------	
+    public void prepararParaCombate() {
+    	quitarDefensa();
+    	limpiarEfectosTemporales();
+    	vidaActual = vidaMaxima;
+    	energiaActual = energiaMaxima;
+    	cambiarEstado(new EnPie());
+    }
 
+    public void finalizarCombate() {
+    	quitarDefensa();
+    	limpiarEfectosTemporales();
+    	cambiarEstado(new Preparado());
+    }
+
+    public void recuperarEnergia(int cantidad) {   // la llama el Combate en cada asalto
+    	validarPositivo(cantidad);
+    	if (puedeActuar()) energiaActual = Math.min(energiaMaxima, energiaActual + cantidad);
+    }
+	
+	//---------------defensa-------------------------------------------	
+    public void activarDefensa(int cantidad) {
+    	validarPositivo(cantidad);
+    	reduccionDanio += cantidad;
+    	defensaActiva += cantidad;   // acumula: al final del combate se resta todo lo que sumo
+    }
+    private void quitarDefensa() {
+    	reduccionDanio -= defensaActiva;
+    	defensaActiva = 0;
+    }
+
+    public boolean tieneDefensaActiva() { return defensaActiva > 0; }
     
     
     
     
     
-    //------------------------------------------------------------------------	
+    //-----------------equipamiento----------------------------------------	
+    public void equipar(Equipamiento pieza) {
+    	Objects.requireNonNull(pieza);
+    	validarCambioDeEquipo();
+    	if (equipamiento.size() >= MAX_EQUIPAMIENTO)
+    		throw new IllegalStateException("Máximo " + MAX_EQUIPAMIENTO + " piezas");
+    	for (Equipamiento e : equipamiento)
+    		if (e.getCategoria() == pieza.getCategoria())
+    			throw new IllegalArgumentException("Categoría repetida");
+    	equipamiento.add(pieza);
+    	pieza.aplicarEfecto(this);
+    }
+
+    public void desequipar(Equipamiento pieza) {
+    	validarCambioDeEquipo();
+    	if (!equipamiento.remove(pieza)) throw new IllegalArgumentException("No la tiene equipada");
+    	pieza.quitarEfecto(this);
+    }
+
+    private void validarCambioDeEquipo() {
+    	if (!estado.puedeModificarEquipamiento())
+    		throw new IllegalStateException("No se puede cambiar el equipo en combate");
+    }
+
+    public List<Equipamiento> getEquipamiento() { return Collections.unmodifiableList(equipamiento); }
+
+    // los llaman las piezas (+ al equipar, - al quitar)
+    public void modificarDanio(int c)          { danio += c; }
+    public void modificarReduccionDanio(int c) { reduccionDanio += c; }
+    public void modificarVidaMaxima(int c) {
+    	vidaMaxima += c;
+    	vidaActual = Math.min(vidaActual, vidaMaxima);       // no sube; solo se recorta (§4)
+    }
+    public void modificarEnergiaMaxima(int c) {
+    	energiaMaxima += c;
+    	energiaActual = Math.min(energiaActual, energiaMaxima);
+    }
     //------------------------------------------------------------------------	
 	
 	
@@ -250,8 +326,30 @@ public abstract class Combatiente {
 	
 	//hacer test de dos combatientes con mismo id y disitnto nombre son iguales !
 
+	
+	
+	
+    //------------------------------------------------------------------------	
 
 
+	public int usosRestantes(Tecnica t) { return usosPorTecnica.getOrDefault(t, 0); }
+
+	public boolean puedeUsar(Tecnica t) {
+		return puedeActuar() && usosRestantes(t) > 0 && tieneEnergiaPara(t.getCostoEnergia());
+	}
+
+	public List<Tecnica> getTecnicas() { return new ArrayList<>(usosPorTecnica.keySet()); }  // en orden de la escuela
+
+	
+	
+	
+	
+	public Optional<Tecnica> elegirTecnica(Set<Tecnica> bloqueadasPorCompanero) {
+		return criterio.elegir(this, bloqueadasPorCompanero);
+	}
+	public void setCriterio(CriterioDeAccion criterio) {
+		this.criterio = Objects.requireNonNull(criterio);
+	}
 
 
 }

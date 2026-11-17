@@ -9,8 +9,10 @@ public class Curacion implements Efecto{
 		this.cantidad = cantidad;
 	}
 	
+	///como modifique implemento y esta clase lo implementa modifico la firma de
+	/// aplicarEfecto
 	@Override
-	public void aplicarEfecto(Combatiente afectado){
+	public void aplicarEfecto(Combatiente ejecutor, Combatiente afectado) {
 		afectado.curar(cantidad);
 	}
 
