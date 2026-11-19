@@ -1,52 +1,75 @@
 package main;
+import java.util.List;
 
 import combatiente.Combatiente;
-import combatiente.CultivadorDeLaEspada;
-import combatiente.HechiceroDelVacio;
-import combatiente.MonjeDelCuerpoCelestial;
+import combatiente.CreadorCombatiente;
+import equipamiento_y_tecnicas.AnilloEspiritual;
+import equipamiento_y_tecnicas.ArmaduraDorada;
+import equipamiento_y_tecnicas.CorteDeLosMilAmaneceres;
+import equipamiento_y_tecnicas.EspadaCelestial;
+import equipamiento_y_tecnicas.SelloDelFenix;
+import escuela.Escuela;
+import excepciones.EquipamientoInvalidoException;
+import excepciones.InscripcionInvalidaException;
+import excepciones.TecnicaNoDisponibleException;
+import excepciones.TorneoInvalidoException;
+import torneo.Pareja;
+import torneo.Torneo;
+
 
 public class App {
 
 	public static void main(String[] args) {
 
-		// crear un combatiente de cada tipo
-		Combatiente aurelio = new CultivadorDeLaEspada(1, "Aurelio");
-		Combatiente kael = new MonjeDelCuerpoCelestial(2, "Kael");
-		Combatiente nebula = new HechiceroDelVacio(3, "Nébula");
+		Escuela espada = new Escuela("Escuela de la Espada Celestial",
+				List.of(new CorteDeLosMilAmaneceres()), List.of(new EspadaCelestial()));
+		CreadorCombatiente creador = new CreadorCombatiente();
+		Torneo torneo = new Torneo();
 
-		// Comienza el combate: pasan de Preparado a EnPie
-		aurelio.prepararParaCombate();
-		kael.prepararParaCombate();
-		nebula.prepararParaCombate();
+		try {
+			// crear puede lanzar EquipamientoInvalidoException (la escuela equipa)
+			Combatiente aurelio = creador.crear(CreadorCombatiente.CULTIVADOR, "Aurelio", espada);
+			Combatiente darian = creador.crear(CreadorCombatiente.CULTIVADOR, "Darian", espada);
+			Pareja primera = new Pareja(1, aurelio, darian);
+			torneo.inscribir(primera);
 
-		// Aurelio (Cultivador) pega 25% más
-		aurelio.atacar(nebula);
-		System.out.println("Nébula queda con " + nebula.getVidaActual() + " de vida");
+			// Cada regla en su propio try/catch: se muestra el rechazo y el programa sigue.
+			try {
+				aurelio.equipar(new EspadaCelestial());          // categoría repetida
+			} catch (EquipamientoInvalidoException e) {
+				System.out.println("Equipamiento rechazado: " + e.getMessage());
+			}
 
-		// Kael (Monje) recibe 25% menos
-		aurelio.atacar(kael);
-		System.out.println("Kael queda con " + kael.getVidaActual() + " de vida");
+			try {
+				aurelio.equipar(new ArmaduraDorada());
+				aurelio.equipar(new AnilloEspiritual());
+				aurelio.equipar(new SelloDelFenix());            // cuarta pieza
+			} catch (EquipamientoInvalidoException e) {
+				System.out.println("Equipamiento rechazado: " + e.getMessage());
+			}
 
-		// Nébula (Hechicero) paga menos energía
-		nebula.gastarEnergia(20);
-		System.out.println("Nébula gastó una técnica de 20 y le queda " + nebula.getEnergiaActual() + " de energía");
+			try {
+				aurelio.usarTecnica(new CorteDeLosMilAmaneceres(), darian);  // fuera de combate
+			} catch (TecnicaNoDisponibleException e) {
+				System.out.println("Técnica rechazada: " + e.getMessage());
+			}
 
-		// Kael activa una defensa y recibe menos daño
-		kael.activarDefensa(5);
-		aurelio.atacar(kael);
-		System.out.println("Kael con defensa queda con " + kael.getVidaActual() + " de vida");
+			try {
+				torneo.inscribir(primera);                       // pareja repetida
+			} catch (InscripcionInvalidaException e) {
+				System.out.println("Inscripción rechazada: " + e.getMessage());
+			}
 
-		// Nébula cae: pasa a FueraDeCombate
-		while (nebula.puedeSerObjetivo()) {
-			aurelio.atacar(nebula);
+			torneo.iniciar();                                    // solo 1 pareja: se rechaza
+
+		} catch (EquipamientoInvalidoException e) {
+			System.out.println("Error al preparar un combatiente: " + e.getMessage());
+		} catch (InscripcionInvalidaException e) {
+			System.out.println("Inscripción rechazada: " + e.getMessage());
+		} catch (TorneoInvalidoException e) {
+			System.out.println("No se pudo iniciar el torneo: " + e.getMessage());
+		} finally {
+			System.out.println("Fin de la prueba de excepciones");   // finally siempre se ejecuta
 		}
-		System.out.println("Nébula puede actuar: " + nebula.puedeActuar());
-
-		// Termina el combate y empieza otro: todos vuelven al máximo
-		aurelio.finalizarCombate();
-		kael.finalizarCombate();
-		nebula.finalizarCombate();
-		nebula.prepararParaCombate();
-		System.out.println("Nuevo combate: Nébula vuelve con " + nebula.getVidaActual() + " de vida");
 	}
 }

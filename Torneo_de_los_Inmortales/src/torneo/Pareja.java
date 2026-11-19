@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import combatiente.Combatiente;
 import equipamiento_y_tecnicas.Tecnica;
+import combatiente.Combatiente;
+import interesado.Notificador;
 
 // Una pareja no conoce a sus otras parejas.
 public class Pareja implements Iterable<Combatiente> {
@@ -46,9 +48,15 @@ public class Pareja implements Iterable<Combatiente> {
         return iterator().hasNext();
     }
 
-    // HECHO
+	// El combate necesita el id para que juegue primero la pareja de menor id,
+	// y el torneo lo usa en los mensajes de error.
+	public int getId() {
+		return id;
+	}
+
+	// Devuelve una copia: desde afuera no se puede modificar la lista de la pareja.
 	public List<Combatiente> getCombatientes() {
-		return this.combatientes;
+		return List.copyOf(this.combatientes);
 	}
 
     // HECHO
@@ -60,7 +68,7 @@ public class Pareja implements Iterable<Combatiente> {
 		return vidaTotal;
 	}
 	
-	public boolean puedeUsar(Combatiente c, Tecnica t) {}
+	//public boolean puedeUsar(Combatiente c, Tecnica t) {}
 	
 	public void registrarUso(Combatiente c, Tecnica t) {}
 	

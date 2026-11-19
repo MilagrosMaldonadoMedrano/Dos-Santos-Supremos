@@ -15,6 +15,8 @@ import java.util.Objects;
 import efectos.EfectoTemporal;
 import equipamiento_y_tecnicas.Equipamiento;
 import equipamiento_y_tecnicas.Tecnica;
+import excepciones.EquipamientoInvalidoException;
+import excepciones.TecnicaNoDisponibleException;
 
 
 public abstract class Combatiente {
@@ -188,21 +190,16 @@ public abstract class Combatiente {
 	//------------------------------------------------------------------------
 	//----------------------tecnicas------------------------------------------
 
-	public void usarTecnica(Tecnica tecnica, Combatiente objetivo){
-		Integer usosActuales = usosPorTecnica.getOrDefault(tecnica, null);
-
-		if (!puedeActuar()) 
-			throw new IllegalStateException(nombre + " no puede actuar");
-		
-		if(usosActuales == null)
-			throw new IllegalStateException(nombre + " no conoce la tecnica: " + tecnica.getNombre());
-
-
-		if(usosActuales <= 0)
-			throw new IllegalStateException(nombre + " alcanzo el limite de usos de la tecnica: " + tecnica.getNombre());
-
+	public void usarTecnica(Tecnica tecnica, Combatiente objetivo) throws TecnicaNoDisponibleException {
+		if (!puedeActuar())
+			throw new TecnicaNoDisponibleException(nombre + " no puede actuar");
+		Integer usos = usosPorTecnica.get(tecnica);
+		if (usos == null)
+			throw new TecnicaNoDisponibleException(nombre + " no conoce " + tecnica.getNombre());
+		if (usos <= 0)
+			throw new TecnicaNoDisponibleException(nombre + " no tiene usos de " + tecnica.getNombre());
 		tecnica.realizar(this, objetivo);
-		usosPorTecnica.put(tecnica, usosActuales - 1);
+		usosPorTecnica.put(tecnica, usos - 1);
 	}
 
 	public void aprenderTecnicas(List<Tecnica> tecnicas){
@@ -261,27 +258,28 @@ public abstract class Combatiente {
     
     
     //-----------------equipamiento----------------------------------------	
-    public void equipar(Equipamiento pieza) {
-    	Objects.requireNonNull(pieza);
+    public void equipar(Equipamiento pieza) throws EquipamientoInvalidoException {
+    	Objects.requireNonNull(pieza);          // null = error de programación, queda no verificada
     	validarCambioDeEquipo();
     	if (equipamiento.size() >= MAX_EQUIPAMIENTO)
-    		throw new IllegalStateException("Máximo " + MAX_EQUIPAMIENTO + " piezas");
+    		throw new EquipamientoInvalidoException("Máximo " + MAX_EQUIPAMIENTO + " piezas");
     	for (Equipamiento e : equipamiento)
     		if (e.getCategoria() == pieza.getCategoria())
-    			throw new IllegalArgumentException("Categoría repetida");
+    			throw new EquipamientoInvalidoException("Ya tiene una pieza de categoría " + pieza.getCategoria());
     	equipamiento.add(pieza);
     	pieza.aplicarEfecto(this);
     }
 
-    public void desequipar(Equipamiento pieza) {
+    public void desequipar(Equipamiento pieza) throws EquipamientoInvalidoException {
     	validarCambioDeEquipo();
-    	if (!equipamiento.remove(pieza)) throw new IllegalArgumentException("No la tiene equipada");
+    	if (!equipamiento.remove(pieza))
+    		throw new EquipamientoInvalidoException("No tiene equipada la pieza " + pieza.getNombre());
     	pieza.quitarEfecto(this);
     }
 
-    private void validarCambioDeEquipo() {
+    private void validarCambioDeEquipo() throws EquipamientoInvalidoException {
     	if (!estado.puedeModificarEquipamiento())
-    		throw new IllegalStateException("No se puede cambiar el equipo en combate");
+    		throw new EquipamientoInvalidoException("No se puede cambiar el equipo durante el combate");
     }
 
     public List<Equipamiento> getEquipamiento() { return Collections.unmodifiableList(equipamiento); }

@@ -1,5 +1,7 @@
 package torneo;
 
+import combatiente.Combatiente;
+import interesado.Notificador;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -18,7 +20,7 @@ public class IteradorEnPie implements Iterator<Combatiente> {
     @Override
     public boolean hasNext() {
         // Avanza el índice saltándose a los que ya cayeron (no están en pie)
-        while (posicion < integrantes.size() && !integrantes.get(posicion).estaEnPie()) {
+        while (posicion < integrantes.size() && !integrantes.get(posicion).puedeActuar()) {
             posicion++;
         }
         return posicion < integrantes.size();

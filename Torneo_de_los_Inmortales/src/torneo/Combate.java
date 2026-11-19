@@ -1,5 +1,9 @@
 package torneo;
 
+
+import combatiente.Combatiente;
+import interesado.Notificador;
+
 public class Combate {
 	private static final int LIMITE_ASALTOS = 30;
 	private static final int ENERGIA_POR_ASALTO = 10;
@@ -7,7 +11,7 @@ public class Combate {
 	private Notificador notificador;
 	private int ronda, asalto;
 	
-	public Pareja jugar() {}
+	/*public Pareja jugar() {}
 	
 	public void jugarAsalto() {}
 	
@@ -21,5 +25,5 @@ public class Combate {
 
 	public boolean terminado() {}
 
-	public void suscribirReacciones() {}
+	public void suscribirReacciones() {}*/
 }

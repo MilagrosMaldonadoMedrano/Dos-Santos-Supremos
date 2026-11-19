@@ -2,7 +2,8 @@ package torneo;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import combatiente.Combatiente;
+import interesado.Notificador;
 public class Ronda {
 	private int numero;
 	private List<Cruce> cruces;
@@ -15,9 +16,9 @@ public class Ronda {
 		
 	}
 	
-	public List<Pareja> jugar(Notificador n) {}
+	/*public List<Pareja> jugar(Notificador n) {}
 	
 	public int getNumero() {}
 	
-	public List<Cruce> getCruces() {}
+	public List<Cruce> getCruces() {}*/
 }
