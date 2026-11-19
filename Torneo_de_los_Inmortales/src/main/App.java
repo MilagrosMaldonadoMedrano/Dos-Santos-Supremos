@@ -1,52 +1,85 @@
 package main;
 
+import java.util.List;
+
 import combatiente.Combatiente;
-import combatiente.CultivadorDeLaEspada;
-import combatiente.HechiceroDelVacio;
-import combatiente.MonjeDelCuerpoCelestial;
+import combatiente.CreadorCombatiente;
+import equipamiento_y_tecnicas.AnilloEspiritual;
+import equipamiento_y_tecnicas.ArmaduraDorada;
+import equipamiento_y_tecnicas.CorteDeLosMilAmaneceres;
+import equipamiento_y_tecnicas.DominioDeLaNada;
+import equipamiento_y_tecnicas.EspadaCelestial;
+import equipamiento_y_tecnicas.MeditacionDelInmortal;
+import equipamiento_y_tecnicas.MuroDelCuerpoDorado;
+import equipamiento_y_tecnicas.RugidoDeLaBestiaPrimordial;
+import equipamiento_y_tecnicas.SelloDelFenix;
+import escuela.Escuela;
+import excepciones.EquipamientoInvalidoException;
+import excepciones.InscripcionInvalidaException;
+import excepciones.TorneoInvalidoException;
+import interesado.CronistaDeLaSecta;
+import interesado.HeraldoImperial;
+import torneo.Pareja;
+import torneo.Torneo;
+
 
 public class App {
 
 	public static void main(String[] args) {
+		HeraldoImperial heraldo = new HeraldoImperial(System.out);
+		CronistaDeLaSecta cronista = new CronistaDeLaSecta();
 
-		// crear un combatiente de cada tipo
-		Combatiente aurelio = new CultivadorDeLaEspada(1, "Aurelio");
-		Combatiente kael = new MonjeDelCuerpoCelestial(2, "Kael");
-		Combatiente nebula = new HechiceroDelVacio(3, "Nébula");
+		// Escuela = configuración: técnicas y equipamiento iniciales.
+		Escuela escuelaDeLaEspada = new Escuela("Escuela de la Espada Celestial",
+				List.of(new CorteDeLosMilAmaneceres(), new RugidoDeLaBestiaPrimordial()),
+				List.of(new EspadaCelestial()));
+		Escuela palacioDelVacio = new Escuela("Palacio del Vacío",
+				List.of(new DominioDeLaNada(), new MeditacionDelInmortal()),
+				List.of(new AnilloEspiritual()));
+		Escuela monasterio = new Escuela("Monasterio del Cuerpo Dorado",
+				List.of(new MuroDelCuerpoDorado(), new MeditacionDelInmortal()),
+				List.of(new ArmaduraDorada(), new SelloDelFenix()));
 
-		// Comienza el combate: pasan de Preparado a EnPie
-		aurelio.prepararParaCombate();
-		kael.prepararParaCombate();
-		nebula.prepararParaCombate();
+		try {
+			// La creación de combatientes está centralizada (Factory).
+			CreadorCombatiente creador = new CreadorCombatiente();
+			Combatiente aurelio = creador.crear(CreadorCombatiente.CULTIVADOR, "Aurelio", escuelaDeLaEspada);
+			Combatiente nebula = creador.crear(CreadorCombatiente.HECHICERO, "Nébula", palacioDelVacio);
+			Combatiente kael = creador.crear(CreadorCombatiente.MONJE, "Kael", monasterio);
+			Combatiente darian = creador.crear(CreadorCombatiente.CULTIVADOR, "Darian", escuelaDeLaEspada);
+			Combatiente lyra = creador.crear(CreadorCombatiente.HECHICERO, "Lyra", palacioDelVacio);
+			Combatiente tharos = creador.crear(CreadorCombatiente.MONJE, "Tharos", escuelaDeLaEspada);
+			Combatiente selene = creador.crear(CreadorCombatiente.CULTIVADOR, "Selene", monasterio);
+			Combatiente orin = creador.crear(CreadorCombatiente.HECHICERO, "Orin", palacioDelVacio);
 
-		// Aurelio (Cultivador) pega 25% más
-		aurelio.atacar(nebula);
-		System.out.println("Nébula queda con " + nebula.getVidaActual() + " de vida");
+			Torneo torneo = new Torneo();
+			// Registrar al Heraldo y al Cronista como interesados (Observer).
+			torneo.suscribir(heraldo);
+			torneo.suscribir(cronista);
 
-		// Kael (Monje) recibe 25% menos
-		aurelio.atacar(kael);
-		System.out.println("Kael queda con " + kael.getVidaActual() + " de vida");
+			torneo.inscribir(new Pareja(1, aurelio, nebula));
+			torneo.inscribir(new Pareja(2, kael, darian));
+			torneo.inscribir(new Pareja(3, lyra, tharos));
+			torneo.inscribir(new Pareja(4, selene, orin));
 
-		// Nébula (Hechicero) paga menos energía
-		nebula.gastarEnergia(20);
-		System.out.println("Nébula gastó una técnica de 20 y le queda " + nebula.getEnergiaActual() + " de energía");
+			// Regla 5: un combatiente no puede inscribirse dos veces. Se muestra y se sigue.
+			try {
+				torneo.inscribir(new Pareja(5, aurelio, orin));
+			} catch (InscripcionInvalidaException e) {
+				heraldo.anunciar("Inscripción rechazada: " + e.getMessage());
+			}
 
-		// Kael activa una defensa y recibe menos daño
-		kael.activarDefensa(5);
-		aurelio.atacar(kael);
-		System.out.println("Kael con defensa queda con " + kael.getVidaActual() + " de vida");
+			torneo.iniciar();   // el Heraldo va anunciando todo, incluida la proclamación
 
-		// Nébula cae: pasa a FueraDeCombate
-		while (nebula.puedeSerObjetivo()) {
-			aurelio.atacar(nebula);
+			// Al terminar, el main le pide la tabla al Cronista y el Heraldo la presenta (7).
+			heraldo.presentarTabla(cronista.tablaDePosiciones());
+
+		} catch (EquipamientoInvalidoException e) {
+			heraldo.anunciar("Error al preparar un combatiente: " + e.getMessage());
+		} catch (InscripcionInvalidaException e) {
+			heraldo.anunciar("Inscripción rechazada: " + e.getMessage());
+		} catch (TorneoInvalidoException e) {
+			heraldo.anunciar("No se pudo iniciar el torneo: " + e.getMessage());
 		}
-		System.out.println("Nébula puede actuar: " + nebula.puedeActuar());
-
-		// Termina el combate y empieza otro: todos vuelven al máximo
-		aurelio.finalizarCombate();
-		kael.finalizarCombate();
-		nebula.finalizarCombate();
-		nebula.prepararParaCombate();
-		System.out.println("Nuevo combate: Nébula vuelve con " + nebula.getVidaActual() + " de vida");
 	}
 }

@@ -17,7 +17,7 @@ public class Veneno extends EfectoTemporal{
 
     @Override
     protected void ejecutarEfecto(Combatiente afectado) {
-        afectado.recibirDanio(dañoPorTurno);
+    	afectado.recibirDanioDirecto(dañoPorTurno); 
     }
 
     @Override

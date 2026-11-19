@@ -1,5 +1,6 @@
 package escuela;
 import combatiente.Combatiente;
+import excepciones.EquipamientoInvalidoException;
 import equipamiento_y_tecnicas.Equipamiento;
 import equipamiento_y_tecnicas.Tecnica;
 import java.util.List;
@@ -17,7 +18,7 @@ public class Escuela {
     
     
     //la escuela prepara al combatiente
-    public void preparar(Combatiente c) {
+    public void preparar(Combatiente c) throws EquipamientoInvalidoException{
 		c.aprenderTecnicas(tecnicasIniciales); // cada tecnica con 5 usos
 		for (Equipamiento e : equipamiento) {
 			c.equipar(e);       // valida maximo 3 y categ
