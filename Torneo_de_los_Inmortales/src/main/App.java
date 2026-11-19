@@ -1,4 +1,5 @@
 package main;
+
 import java.util.List;
 
 import combatiente.Combatiente;
@@ -6,13 +7,18 @@ import combatiente.CreadorCombatiente;
 import equipamiento_y_tecnicas.AnilloEspiritual;
 import equipamiento_y_tecnicas.ArmaduraDorada;
 import equipamiento_y_tecnicas.CorteDeLosMilAmaneceres;
+import equipamiento_y_tecnicas.DominioDeLaNada;
 import equipamiento_y_tecnicas.EspadaCelestial;
+import equipamiento_y_tecnicas.MeditacionDelInmortal;
+import equipamiento_y_tecnicas.MuroDelCuerpoDorado;
+import equipamiento_y_tecnicas.RugidoDeLaBestiaPrimordial;
 import equipamiento_y_tecnicas.SelloDelFenix;
 import escuela.Escuela;
 import excepciones.EquipamientoInvalidoException;
 import excepciones.InscripcionInvalidaException;
-import excepciones.TecnicaNoDisponibleException;
 import excepciones.TorneoInvalidoException;
+import interesado.CronistaDeLaSecta;
+import interesado.HeraldoImperial;
 import torneo.Pareja;
 import torneo.Torneo;
 
@@ -20,56 +26,60 @@ import torneo.Torneo;
 public class App {
 
 	public static void main(String[] args) {
+		HeraldoImperial heraldo = new HeraldoImperial(System.out);
+		CronistaDeLaSecta cronista = new CronistaDeLaSecta();
 
-		Escuela espada = new Escuela("Escuela de la Espada Celestial",
-				List.of(new CorteDeLosMilAmaneceres()), List.of(new EspadaCelestial()));
-		CreadorCombatiente creador = new CreadorCombatiente();
-		Torneo torneo = new Torneo();
+		// Escuela = configuración: técnicas y equipamiento iniciales.
+		Escuela escuelaDeLaEspada = new Escuela("Escuela de la Espada Celestial",
+				List.of(new CorteDeLosMilAmaneceres(), new RugidoDeLaBestiaPrimordial()),
+				List.of(new EspadaCelestial()));
+		Escuela palacioDelVacio = new Escuela("Palacio del Vacío",
+				List.of(new DominioDeLaNada(), new MeditacionDelInmortal()),
+				List.of(new AnilloEspiritual()));
+		Escuela monasterio = new Escuela("Monasterio del Cuerpo Dorado",
+				List.of(new MuroDelCuerpoDorado(), new MeditacionDelInmortal()),
+				List.of(new ArmaduraDorada(), new SelloDelFenix()));
 
 		try {
-			// crear puede lanzar EquipamientoInvalidoException (la escuela equipa)
-			Combatiente aurelio = creador.crear(CreadorCombatiente.CULTIVADOR, "Aurelio", espada);
-			Combatiente darian = creador.crear(CreadorCombatiente.CULTIVADOR, "Darian", espada);
-			Pareja primera = new Pareja(1, aurelio, darian);
-			torneo.inscribir(primera);
+			// La creación de combatientes está centralizada (Factory).
+			CreadorCombatiente creador = new CreadorCombatiente();
+			Combatiente aurelio = creador.crear(CreadorCombatiente.CULTIVADOR, "Aurelio", escuelaDeLaEspada);
+			Combatiente nebula = creador.crear(CreadorCombatiente.HECHICERO, "Nébula", palacioDelVacio);
+			Combatiente kael = creador.crear(CreadorCombatiente.MONJE, "Kael", monasterio);
+			Combatiente darian = creador.crear(CreadorCombatiente.CULTIVADOR, "Darian", escuelaDeLaEspada);
+			Combatiente lyra = creador.crear(CreadorCombatiente.HECHICERO, "Lyra", palacioDelVacio);
+			Combatiente tharos = creador.crear(CreadorCombatiente.MONJE, "Tharos", escuelaDeLaEspada);
+			Combatiente selene = creador.crear(CreadorCombatiente.CULTIVADOR, "Selene", monasterio);
+			Combatiente orin = creador.crear(CreadorCombatiente.HECHICERO, "Orin", palacioDelVacio);
 
-			// Cada regla en su propio try/catch: se muestra el rechazo y el programa sigue.
-			try {
-				aurelio.equipar(new EspadaCelestial());          // categoría repetida
-			} catch (EquipamientoInvalidoException e) {
-				System.out.println("Equipamiento rechazado: " + e.getMessage());
-			}
+			Torneo torneo = new Torneo();
+			// Registrar al Heraldo y al Cronista como interesados (Observer).
+			torneo.suscribir(heraldo);
+			torneo.suscribir(cronista);
 
-			try {
-				aurelio.equipar(new ArmaduraDorada());
-				aurelio.equipar(new AnilloEspiritual());
-				aurelio.equipar(new SelloDelFenix());            // cuarta pieza
-			} catch (EquipamientoInvalidoException e) {
-				System.out.println("Equipamiento rechazado: " + e.getMessage());
-			}
+			torneo.inscribir(new Pareja(1, aurelio, nebula));
+			torneo.inscribir(new Pareja(2, kael, darian));
+			torneo.inscribir(new Pareja(3, lyra, tharos));
+			torneo.inscribir(new Pareja(4, selene, orin));
 
+			// Regla 5: un combatiente no puede inscribirse dos veces. Se muestra y se sigue.
 			try {
-				aurelio.usarTecnica(new CorteDeLosMilAmaneceres(), darian);  // fuera de combate
-			} catch (TecnicaNoDisponibleException e) {
-				System.out.println("Técnica rechazada: " + e.getMessage());
-			}
-
-			try {
-				torneo.inscribir(primera);                       // pareja repetida
+				torneo.inscribir(new Pareja(5, aurelio, orin));
 			} catch (InscripcionInvalidaException e) {
-				System.out.println("Inscripción rechazada: " + e.getMessage());
+				heraldo.anunciar("Inscripción rechazada: " + e.getMessage());
 			}
 
-			torneo.iniciar();                                    // solo 1 pareja: se rechaza
+			torneo.iniciar();   // el Heraldo va anunciando todo, incluida la proclamación
+
+			// Al terminar, el main le pide la tabla al Cronista y el Heraldo la presenta (7).
+			heraldo.presentarTabla(cronista.tablaDePosiciones());
 
 		} catch (EquipamientoInvalidoException e) {
-			System.out.println("Error al preparar un combatiente: " + e.getMessage());
+			heraldo.anunciar("Error al preparar un combatiente: " + e.getMessage());
 		} catch (InscripcionInvalidaException e) {
-			System.out.println("Inscripción rechazada: " + e.getMessage());
+			heraldo.anunciar("Inscripción rechazada: " + e.getMessage());
 		} catch (TorneoInvalidoException e) {
-			System.out.println("No se pudo iniciar el torneo: " + e.getMessage());
-		} finally {
-			System.out.println("Fin de la prueba de excepciones");   // finally siempre se ejecuta
+			heraldo.anunciar("No se pudo iniciar el torneo: " + e.getMessage());
 		}
 	}
 }

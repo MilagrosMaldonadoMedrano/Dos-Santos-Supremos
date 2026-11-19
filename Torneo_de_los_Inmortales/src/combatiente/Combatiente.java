@@ -349,6 +349,15 @@ public abstract class Combatiente {
 		this.criterio = Objects.requireNonNull(criterio);
 	}
 
+	// Daño de los efectos temporales (veneno): actúa "desde adentro", así que
+	// ignora la armadura, la defensa (Muro) y la reducción del Monje.
+	// Igual pasa por el estado: si está en pie pierde vida y puede caer.
+	public void recibirDanioDirecto(int danio) {
+		if (danio < 0) {
+			throw new IllegalArgumentException("El daño no puede ser negativo");
+		}
+		estado.recibirDanio(this, danio);
+	}
 
 }
 
