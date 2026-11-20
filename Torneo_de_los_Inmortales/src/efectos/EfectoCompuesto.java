@@ -19,14 +19,6 @@ public class EfectoCompuesto implements Efecto{
 	
 	//composite
 	
-	/*@Override
-	public void aplicarEfecto(Combatiente afectado) {
-		for (Efecto e : efectos) {
-			e.aplicarEfecto(afectado);
-		}
-	}*/
-	
-	
 	//mismo caso que en Daño, se pasa el ejecutor para calcular cuanto pega
 	
 	@Override
