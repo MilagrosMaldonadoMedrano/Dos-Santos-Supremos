@@ -8,33 +8,48 @@ import java.util.NoSuchElementException;
 
 import combatiente.Combatiente;
 
+/*
+ * ITERATOR: recorre los integrantes de una pareja salteando a los que están fuera de
+ * combate. Así el combate escribe un for simple sin saber cómo está guardada la pareja.
+ * Lo crea: Pareja.iterator.
+ */
 public class IteradorEnPie implements Iterator<Combatiente> {
-    private final List<Combatiente> integrantes;
-    private int posicion;
+	private final List<Combatiente> integrantes;
+	private int posicion;   // índice del próximo integrante a revisar
 
-    public IteradorEnPie(List<Combatiente> integrantes) {
-        this.integrantes = integrantes;
-        this.posicion = 0;
-    }
+	/*
+	 * Recibe la lista de integrantes (ya ordenada por id) y arranca desde el primero.
+	 * Lo usa: Pareja.iterator.
+	 */
+	public IteradorEnPie(List<Combatiente> integrantes) {
+		this.integrantes = integrantes;
+		this.posicion = 0;
+	}
 
-    @Override
-    public boolean hasNext() {
-        // Avanza el índice saltándose a los que ya cayeron (no están en pie)
-        while (posicion < integrantes.size() && !integrantes.get(posicion).puedeActuar()) {
-            posicion++;
-        }
-        return posicion < integrantes.size();
-    }
+	/*
+	 * Avanza salteando a los que no pueden actuar (caídos) e indica si queda alguno en pie.
+	 * Lo usan: el for de Java sobre una Pareja, Pareja.tieneIntegrantesEnPie y next.
+	 */
+	@Override
+	public boolean hasNext() {
+		while (posicion < integrantes.size() && !integrantes.get(posicion).puedeActuar()) {
+			posicion++;
+		}
+		return posicion < integrantes.size();
+	}
 
-    @Override
-    public Combatiente next() {
-        if (
-        	// si no tiene siguiente
-        	!hasNext()
-        ) {
-        	// Devuelve una excepción.
-            throw new NoSuchElementException("No hay más combatientes en pie en la pareja.");
-        }
-        return integrantes.get(posicion++);
-    }
+	/*
+	 * Devuelve el próximo integrante en pie. Si no queda ninguno, lanza
+	 * NoSuchElementException.
+	 * Lo usa: el for de Java sobre una Pareja.
+	 */
+	@Override
+	public Combatiente next() {
+		if (
+			!hasNext()
+		) {
+			throw new NoSuchElementException("No hay más combatientes en pie en la pareja.");
+		}
+		return integrantes.get(posicion++);
+	}
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import equipamiento_y_tecnicas.CorteDeLosMilAmaneceres;
 import equipamiento_y_tecnicas.Tecnica;
+import excepciones.TecnicaNoDisponibleException;
 
 class CombatienteTest {
 
@@ -30,7 +31,7 @@ class CombatienteTest {
 		assertTrue(caido.elegirTecnica(Set.of()).isEmpty());
 
 		assertThrows(IllegalStateException.class, () -> caido.atacar(rival));
-		assertThrows(IllegalStateException.class, () -> caido.usarTecnica(corte, rival));
+		assertThrows(TecnicaNoDisponibleException.class, () -> caido.usarTecnica(corte, rival));
 		assertThrows(IllegalStateException.class, () -> caido.curar(20));
 
 		assertEquals(Combatiente.VIDA_INICIAL, rival.getVidaActual());
@@ -51,8 +52,7 @@ class CombatienteTest {
 		caido.recibirDanio(Combatiente.VIDA_INICIAL);
 
 		assertFalse(caido.puedeSerObjetivo());
-		assertThrows(IllegalStateException.class, () -> atacante.atacar(caido));
-		assertThrows(IllegalStateException.class, () -> atacante.usarTecnica(corte, caido));
+		assertThrows(TecnicaNoDisponibleException.class, () -> atacante.usarTecnica(corte, caido));
 		assertThrows(IllegalStateException.class, () -> caido.recibirDanio(10));
 
 		assertEquals(Combatiente.ENERGIA_INICIAL, atacante.getEnergiaActual());

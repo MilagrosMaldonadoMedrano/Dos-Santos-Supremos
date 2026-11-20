@@ -13,46 +13,75 @@ import java.util.Set;
 import combatiente.Combatiente;
 import equipamiento_y_tecnicas.Tecnica;
 
-// Una pareja no conoce a sus otras parejas.
-// Implementa Iterable: un "for (Combatiente c : pareja)" recorre SOLO a los que
-// están en pie, ordenados por id (lo hace IteradorEnPie) -> patrón Iterator.
+/*
+ * Unidad que participa en el torneo: dos combatientes con un identificador.
+ * ITERATOR: implementa Iterable, así un "for (Combatiente c : pareja)" recorre solo a
+ * los integrantes en pie, ordenados por id (lo hace IteradorEnPie).
+ * También lleva la regla del compañero: qué integrante tiene tomada cada técnica.
+ * Una pareja no conoce a las otras parejas.
+ * La crean: el main (App) y las pruebas.
+ */
 public class Pareja implements Iterable<Combatiente> {
 	private final int id;
-	private final List<Combatiente> combatientes;
-	// Regla del compañero (§6): qué integrante "tiene tomada" cada técnica en este combate.
-	private final Map<Tecnica, Combatiente> tecnicasEnUso;
+	private final List<Combatiente> combatientes;          // ordenados por id
+	private final Map<Tecnica, Combatiente> tecnicasEnUso;  // regla del compañero: técnica y quién la tiene tomada
 
+	/*
+	 * Crea la pareja con su id y sus dos combatientes, ordenados por id (dentro de la
+	 * pareja actúa primero el de menor id). Si alguno es null o son el mismo, lanza
+	 * IllegalArgumentException.
+	 * Lo usan: el main (App) y las pruebas.
+	 */
 	public Pareja(int id, Combatiente a, Combatiente b) {
 		if (a == null || b == null || a.equals(b)) {
 			throw new IllegalArgumentException("La pareja debe tener dos combatientes distintos.");
 		}
 		this.id = id;
 		this.combatientes = new ArrayList<>(List.of(a, b));
-		// Ordenados por id: dentro de la pareja actúa primero el de menor id (§6).
 		this.combatientes.sort(Comparator.comparingInt(Combatiente::getIdentificador));
 		this.tecnicasEnUso = new HashMap<>();
 	}
 
+	/*
+	 * ITERATOR: devuelve un iterador que recorre solo a los integrantes en pie.
+	 * Lo usan: todos los "for (Combatiente c : pareja)" de Combate y tieneIntegrantesEnPie.
+	 */
 	@Override
 	public Iterator<Combatiente> iterator() {
 		return new IteradorEnPie(this.combatientes);
 	}
 
-	// Una pareja pierde cuando sus dos integrantes quedan fuera de combate (§5).
+	/*
+	 * Indica si le queda al menos un integrante en pie. Una pareja pierde cuando sus
+	 * dos integrantes quedan fuera de combate.
+	 * Lo usa: Combate (terminado y para saber quién ganó).
+	 */
 	public boolean tieneIntegrantesEnPie() {
 		return iterator().hasNext();
 	}
 
+	/*
+	 * Devuelve el identificador de la pareja.
+	 * Lo usan: Combate (empieza la de menor id), Torneo (mensajes) y los acontecimientos.
+	 */
 	public int getId() {
 		return id;
 	}
 
-	// Copia: desde afuera no se puede modificar la lista de la pareja.
+	/*
+	 * Devuelve los dos integrantes en una copia: desde afuera no se puede modificar
+	 * la lista de la pareja.
+	 * Lo usan: Torneo.inscribir (rechaza combatientes repetidos) y Acontecimiento.integrantes.
+	 */
 	public List<Combatiente> getCombatientes() {
 		return List.copyOf(this.combatientes);
 	}
 
-	// Suma de la vida actual; un caído suma 0 (§6, desempate por límite de asaltos).
+	/*
+	 * Suma la vida actual de los dos integrantes; un caído suma 0.
+	 * Lo usan: Combate.ganadorPorVida (desempate al llegar al límite de asaltos)
+	 * y ResultadoCombate (vida total de cada pareja al terminar).
+	 */
 	public int vidaTotal() {
 		int vidaTotal = 0;
 		for (Combatiente c : combatientes) {
@@ -61,9 +90,11 @@ public class Pareja implements Iterable<Combatiente> {
 		return vidaTotal;
 	}
 
-	// REGLA DEL COMPAÑERO (§6): devuelve las técnicas que c NO puede usar porque las tiene
-	// tomadas su compañero, mientras el compañero siga en pie y le queden usos de ella.
-	// Este conjunto se le pasa al criterio de acción: combatiente.elegirTecnica(bloqueadas).
+	/*
+	 * REGLA DEL COMPAÑERO: devuelve las técnicas que c NO puede usar porque las tiene
+	 * tomadas su compañero, mientras el compañero siga en pie y le queden usos de ella.
+	 * Lo usa: Combate.actuar, que le pasa el resultado a combatiente.elegirTecnica.
+	 */
 	public Set<Tecnica> tecnicasBloqueadasPara(Combatiente c) {
 		validarIntegrante(c);
 		Set<Tecnica> bloqueadas = new HashSet<>();
@@ -75,13 +106,19 @@ public class Pareja implements Iterable<Combatiente> {
 		return bloqueadas;
 	}
 
+	/*
+	 * REGLA DEL COMPAÑERO: indica si c puede usar una técnica puntual (si no está bloqueada).
+	 * Hoy no lo usa ninguna clase: el combate trabaja con tecnicasBloqueadasPara.
+	 */
 	public boolean puedeUsar(Combatiente c, Tecnica t) {
 		return !tecnicasBloqueadasPara(c).contains(t);
 	}
 
-	// Se llama después de que c usa la técnica t.
-	// Si nadie la tenía tomada, o el que la tenía ya no bloquea (cayó o se quedó
-	// sin usos), pasa a ser de c. Si la tiene c, queda igual.
+	/*
+	 * REGLA DEL COMPAÑERO: registra que c usó la técnica t. Si nadie la tenía tomada, o el
+	 * que la tenía ya no la bloquea (cayó o se quedó sin usos), pasa a ser de c.
+	 * Lo usa: Combate.actuar, después de que la técnica se usó con éxito.
+	 */
 	public void registrarUso(Combatiente c, Tecnica t) {
 		validarIntegrante(c);
 		Combatiente actual = tecnicasEnUso.get(t);
@@ -90,13 +127,19 @@ public class Pareja implements Iterable<Combatiente> {
 		}
 	}
 
-	// Un integrante bloquea una técnica si sigue en pie y le quedan usos de ella.
+	/*
+	 * Un integrante bloquea una técnica si sigue en pie y le quedan usos de ella.
+	 * Lo usan: tecnicasBloqueadasPara y registrarUso.
+	 */
 	private boolean bloquea(Combatiente quien, Tecnica t) {
 		return quien.puedeActuar() && quien.usosRestantes(t) > 0;
 	}
 
-	// Al comenzar cada combate: la restricción del compañero se reinicia (§6)
-	// y los dos vuelven a vida y energía máximas, pasando a EnPie.
+	/*
+	 * Al comenzar cada combate: reinicia la regla del compañero y prepara a los dos
+	 * integrantes (vida y energía al máximo, estado EnPie).
+	 * Lo usa: Combate.jugar.
+	 */
 	public void prepararParaCombate() {
 		tecnicasEnUso.clear();
 		for (Combatiente c : combatientes) {
@@ -104,7 +147,11 @@ public class Pareja implements Iterable<Combatiente> {
 		}
 	}
 
-	// Al terminar el combate: se borra la restricción y los dos vuelven a Preparado.
+	/*
+	 * Al terminar el combate: borra la regla del compañero y los dos integrantes vuelven
+	 * a Preparado.
+	 * Lo usa: Combate.jugar.
+	 */
 	public void finalizarCombate() {
 		tecnicasEnUso.clear();
 		for (Combatiente c : combatientes) {
@@ -112,17 +159,29 @@ public class Pareja implements Iterable<Combatiente> {
 		}
 	}
 
+	/*
+	 * Indica si el combatiente pertenece a esta pareja.
+	 * Lo usa: validarIntegrante.
+	 */
 	public boolean contiene(Combatiente c) {
 		return combatientes.contains(c);
 	}
 
+	/*
+	 * Si el combatiente no es de esta pareja, lanza IllegalArgumentException.
+	 * Lo usan: tecnicasBloqueadasPara y registrarUso.
+	 */
 	private void validarIntegrante(Combatiente c) {
 		if (!contiene(c)) {
 			throw new IllegalArgumentException(c.getNombre() + " no pertenece a la pareja " + id);
 		}
 	}
 
-	// Dos parejas son la misma si tienen el mismo id (evita registrarla dos veces).
+	/*
+	 * Dos parejas son la misma si tienen el mismo id.
+	 * Lo usan: el LinkedHashSet de Torneo (rechaza una pareja repetida) y el constructor
+	 * de Combate (una pareja no puede combatir contra sí misma).
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -133,11 +192,17 @@ public class Pareja implements Iterable<Combatiente> {
 		return this.id == p.id;
 	}
 
+	/*
+	 * Hash por id, igual que equals (necesario para el LinkedHashSet de Torneo).
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
 	}
 
+	/*
+	 * Texto de la pareja: id y nombres de sus integrantes.
+	 */
 	@Override
 	public String toString() {
 		return "Pareja " + id + " (" + combatientes.get(0).getNombre() + " y " + combatientes.get(1).getNombre() + ")";

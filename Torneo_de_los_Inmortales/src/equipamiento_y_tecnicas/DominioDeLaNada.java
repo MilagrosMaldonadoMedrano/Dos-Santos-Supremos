@@ -6,20 +6,28 @@ import efectos.DrenarEnergia;
 import efectos.EfectoCompuesto;
 import efectos.Veneno;
 
-// Ofensiva: daña al rival, le quita energía y lo ENVENENA (bonus: efecto temporal).
+/*
+ * Técnica ofensiva: cuesta 34 de energía. COMPOSITE: su efecto es un EfectoCompuesto
+ * que hace 25 de daño, le quita 15 de energía al rival y lo envenena
+ * (BONUS: 5 de daño por turno durante 3 turnos).
+ * La usa: el Palacio del Vacío en el main.
+ */
 public class DominioDeLaNada extends Tecnica {
 
 	public DominioDeLaNada() {
 		super("Dominio de la Nada", 34, TipoTecnica.OFENSIVA, crearEfectoCompuesto());
 	}
 
-	// Composite: un solo efecto que agrupa tres.
+	/*
+	 * Arma el efecto compuesto de la técnica (Composite). Es static porque se llama
+	 * dentro de super(...), antes de que exista el objeto. AplicarEfectoTemporal le da
+	 * al afectado una copia nueva del veneno cada vez que se usa la técnica.
+	 * Lo usa: el constructor de DominioDeLaNada.
+	 */
 	private static EfectoCompuesto crearEfectoCompuesto() {
 		EfectoCompuesto efectoCompuesto = new EfectoCompuesto();
 		efectoCompuesto.agregar(new Daño(25));
 		efectoCompuesto.agregar(new DrenarEnergia(15));
-		// Veneno: 5 de daño por turno del afectado, durante 3 turnos.
-		// AplicarEfectoTemporal le da al afectado una COPIA nueva cada vez que se usa la técnica.
 		efectoCompuesto.agregar(new AplicarEfectoTemporal(new Veneno(3, 5)));
 		return efectoCompuesto;
 	}

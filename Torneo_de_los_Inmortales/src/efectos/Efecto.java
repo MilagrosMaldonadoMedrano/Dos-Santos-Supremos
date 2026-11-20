@@ -2,13 +2,18 @@ package efectos;
 
 import combatiente.Combatiente;
 
+/*
+ * COMPOSITE: interfaz común de todos los efectos de las técnicas. Los efectos simples
+ * (Daño, Curacion, DrenarEnergia, Reduccion, AplicarEfectoTemporal) y el compuesto
+ * (EfectoCompuesto) se usan exactamente igual, con aplicarEfecto.
+ */
 public interface Efecto {
-	
-	/*hora el efecto recibe también al EJECUTOR (quien usa latecnica)
-	como la consigna pide que una tecnica provoque distinto danio segun quien la 
-	ejecuta se debe poder pasar el ejecutorde la tecnica pata preguntarle cuanto pega
-	
-	*/
+
+	/*
+	 * Aplica el efecto. Recibe al ejecutor (quien usa la técnica) y al afectado.
+	 * El ejecutor se pasa para que el daño use su multiplicador: así una misma técnica
+	 * daña distinto según quién la usa, sin preguntar su tipo.
+	 * Lo usan: Tecnica.realizar y EfectoCompuesto (para cada efecto que contiene).
+	 */
 	void aplicarEfecto(Combatiente ejecutor, Combatiente afectado);
-	//public void aplicarEfecto(Combatiente afectado);
 }

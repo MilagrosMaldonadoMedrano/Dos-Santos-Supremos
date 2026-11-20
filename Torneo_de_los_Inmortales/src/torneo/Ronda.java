@@ -5,11 +5,21 @@ import java.util.List;
 
 import interesado.Notificador;
 
+/*
+ * Etapa del torneo: arma los cruces de a dos parejas y los juega en orden; las
+ * ganadoras pasan a la ronda siguiente.
+ * La crea: Torneo.iniciar, una por cada ronda.
+ */
 public class Ronda {
 	private final int numero;
-	private final List<Cruce> cruces;   // List: conserva el orden de los cruces (§5)
+	private final List<Cruce> cruces;   // lista: conserva el orden de los cruces
 
-	// §5: se emparejan en orden: 1ª vs 2ª, 3ª vs 4ª, etc.
+	/*
+	 * Arma los cruces emparejando en orden: la primera contra la segunda, la tercera
+	 * contra la cuarta, etc. Si la cantidad de parejas no es par, lanza
+	 * IllegalArgumentException.
+	 * Lo usa: Torneo.iniciar.
+	 */
 	public Ronda(int numero, List<Pareja> parejas) {
 		if (parejas.size() < 2 || parejas.size() % 2 != 0) {
 			throw new IllegalArgumentException("Una ronda necesita una cantidad par de parejas");
@@ -21,8 +31,11 @@ public class Ronda {
 		}
 	}
 
-	// Devuelve las ganadoras EN EL ORDEN de los cruces: así la ronda siguiente
-	// se arma "por el orden de los cruces de la ronda anterior" (§5).
+	/*
+	 * Resuelve cada cruce y devuelve las ganadoras EN EL ORDEN de los cruces: así la
+	 * ronda siguiente se arma por el orden de los cruces de la ronda anterior.
+	 * Lo usa: Torneo.iniciar.
+	 */
 	public List<Pareja> jugar(Notificador notificador) {
 		List<Pareja> ganadoras = new ArrayList<>();
 		for (Cruce cruce : cruces) {
@@ -31,10 +44,18 @@ public class Ronda {
 		return ganadoras;
 	}
 
+	/*
+	 * Devuelve el número de la ronda (1, 2, 3...).
+	 * Hoy no lo usa ninguna clase; queda para consultar la ronda.
+	 */
 	public int getNumero() {
 		return numero;
 	}
 
+	/*
+	 * Devuelve los cruces en una copia que no se puede modificar.
+	 * Hoy no lo usa ninguna clase; sirve para verificar el orden de los cruces.
+	 */
 	public List<Cruce> getCruces() {
 		return List.copyOf(cruces);
 	}

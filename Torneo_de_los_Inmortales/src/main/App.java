@@ -22,14 +22,23 @@ import interesado.HeraldoImperial;
 import torneo.Pareja;
 import torneo.Torneo;
 
-
+/*
+ * Programa principal: configura las escuelas, crea los combatientes preparados por
+ * ellas, forma las parejas, juega el torneo completo y muestra los resultados a través
+ * del Heraldo. Atrapa las excepciones propias con try y catch.
+ */
 public class App {
 
+	/*
+	 * Arma el escenario del torneo de 4 parejas y lo juega. Incluye un intento de
+	 * inscripción repetida para mostrar que la regla se cumple. Al final le pide la
+	 * tabla al Cronista y el Heraldo la presenta.
+	 */
 	public static void main(String[] args) {
 		HeraldoImperial heraldo = new HeraldoImperial(System.out);
 		CronistaDeLaSecta cronista = new CronistaDeLaSecta();
 
-		// Escuela = configuración: técnicas y equipamiento iniciales.
+		// Escuelas: solo configuración (técnicas y equipamiento iniciales).
 		Escuela escuelaDeLaEspada = new Escuela("Escuela de la Espada Celestial",
 				List.of(new CorteDeLosMilAmaneceres(), new RugidoDeLaBestiaPrimordial()),
 				List.of(new EspadaCelestial()));
@@ -41,7 +50,7 @@ public class App {
 				List.of(new ArmaduraDorada(), new SelloDelFenix()));
 
 		try {
-			// La creación de combatientes está centralizada (Factory).
+			// Factory: la creación de combatientes está centralizada.
 			CreadorCombatiente creador = new CreadorCombatiente();
 			Combatiente aurelio = creador.crear(CreadorCombatiente.CULTIVADOR, "Aurelio", escuelaDeLaEspada);
 			Combatiente nebula = creador.crear(CreadorCombatiente.HECHICERO, "Nébula", palacioDelVacio);
@@ -53,7 +62,7 @@ public class App {
 			Combatiente orin = creador.crear(CreadorCombatiente.HECHICERO, "Orin", palacioDelVacio);
 
 			Torneo torneo = new Torneo();
-			// Registrar al Heraldo y al Cronista como interesados (Observer).
+			// Observer: el Heraldo y el Cronista se suscriben como interesados.
 			torneo.suscribir(heraldo);
 			torneo.suscribir(cronista);
 
@@ -62,16 +71,17 @@ public class App {
 			torneo.inscribir(new Pareja(3, lyra, tharos));
 			torneo.inscribir(new Pareja(4, selene, orin));
 
-			// Regla 5: un combatiente no puede inscribirse dos veces. Se muestra y se sigue.
+			// Un combatiente no puede inscribirse dos veces: se muestra el rechazo y se sigue.
 			try {
 				torneo.inscribir(new Pareja(5, aurelio, orin));
 			} catch (InscripcionInvalidaException e) {
 				heraldo.anunciar("Inscripción rechazada: " + e.getMessage());
 			}
 
-			torneo.iniciar();   // el Heraldo va anunciando todo, incluida la proclamación
+			// Se juega el torneo; el Heraldo va anunciando todo, incluida la proclamación.
+			torneo.iniciar();
 
-			// Al terminar, el main le pide la tabla al Cronista y el Heraldo la presenta (7).
+			// Al terminar, el main le pide la tabla al Cronista y el Heraldo la presenta.
 			heraldo.presentarTabla(cronista.tablaDePosiciones());
 
 		} catch (EquipamientoInvalidoException e) {
