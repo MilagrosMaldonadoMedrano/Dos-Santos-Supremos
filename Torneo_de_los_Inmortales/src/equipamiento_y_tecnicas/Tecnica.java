@@ -31,7 +31,7 @@ public abstract class Tecnica {
     }
     
     public void realizar(Combatiente ejecutor, Combatiente objetivo) {
-    	// se decide primero a quienafecta y se valida todo ANTES De cobrar la energia
+    	// se decide primero a quien afecta y se valida todo ANTES De cobrar la energia
     	Combatiente afectado = (tipo == TipoTecnica.OFENSIVA) ? objetivo : ejecutor;
     	if (!afectado.puedeSerObjetivo())
     		throw new IllegalStateException(afectado.getNombre() + " no puede ser objetivo");

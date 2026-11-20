@@ -82,6 +82,9 @@ public abstract class Combatiente {
 	public int getEnergiaMaxima() {
 		return energiaMaxima;
 	}
+	public int getDanio() {
+		return danio;
+	}
 	//------------------------------------------------------------------------
 	
 	
