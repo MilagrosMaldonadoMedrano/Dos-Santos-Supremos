@@ -140,7 +140,7 @@ public class Combate {
 	}
 
 	// §6: al llegar al límite gana la de más vida total; en empate, la de menor id.
-	private Pareja ganadorPorVida() {
+	public Pareja ganadorPorVida() {
 		if (segunda.vidaTotal() > primera.vidaTotal()) {
 			return segunda;
 		}

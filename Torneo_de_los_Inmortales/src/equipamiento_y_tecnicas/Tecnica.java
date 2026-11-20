@@ -34,18 +34,7 @@ public abstract class Tecnica {
     	return tipo;
     }
     
-<<<<<<< HEAD
-    public void realizar(Combatiente ejecutor, Combatiente objetivo) {
-    	// se decide primero a quien afecta y se valida todo ANTES De cobrar la energia
-    	Combatiente afectado = (tipo == TipoTecnica.OFENSIVA) ? objetivo : ejecutor;
-    	if (!afectado.puedeSerObjetivo())
-    		throw new IllegalStateException(afectado.getNombre() + " no puede ser objetivo");
-    	if (!ejecutor.tieneEnergiaPara(getCostoEnergia()))
-    		throw new IllegalStateException(ejecutor.getNombre() + " no tiene suficiente energia para usar la tecnica: " + nombre);
-    	ejecutor.gastarEnergia(getCostoEnergia());
-    	efecto.aplicarEfecto(ejecutor, afectado);
-    }
-=======
+
 	// Lanza TecnicaNoDisponibleException (verificada) si el objetivo no está en pie
 	// o si al ejecutor no le alcanza la energía. Se valida todo ANTES de cobrar la energía.
 	public void realizar(Combatiente ejecutor, Combatiente objetivo) throws TecnicaNoDisponibleException {
@@ -57,7 +46,7 @@ public abstract class Tecnica {
 		ejecutor.gastarEnergia(getCostoEnergia());
 		efecto.aplicarEfecto(ejecutor, afectado);
 	}
->>>>>>> origin/main
+
     
     @Override
 	public int hashCode() {

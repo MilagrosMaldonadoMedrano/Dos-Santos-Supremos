@@ -10,11 +10,12 @@ import combatiente.Combatiente;
 import combatiente.CultivadorDeLaEspada;
 import combatiente.HechiceroDelVacio;
 import combatiente.MonjeDelCuerpoCelestial;
+import excepciones.TecnicaNoDisponibleException;
 
 class CorteDeLosMilAmaneceresTest {
 
 	@Test
-	void unaMismaTecnicaDaniaDiferenteSegunElTipoDelEjecutor() {
+	void unaMismaTecnicaDaniaDiferenteSegunElTipoDelEjecutor() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 
 		Combatiente cultivador = new CultivadorDeLaEspada(1, "Aurelio");
@@ -42,7 +43,7 @@ class CorteDeLosMilAmaneceresTest {
 	}
 
 	@Test
-	void noSeEjecutaSinEnergiaSuficiente() {
+	void noSeEjecutaSinEnergiaSuficiente() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new CultivadorDeLaEspada(1, "Aurelio");
 		Combatiente objetivo = new MonjeDelCuerpoCelestial(2, "Kael");
@@ -60,14 +61,14 @@ class CorteDeLosMilAmaneceresTest {
 		int usosAntes = ejecutor.usosRestantes(corte);
 
 		assertEquals(10, energiaAntes);
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 		assertEquals(vidaAntes, objetivo.getVidaActual());
 		assertEquals(energiaAntes, ejecutor.getEnergiaActual());
 		assertEquals(usosAntes, ejecutor.usosRestantes(corte));
 	}
 
 	@Test
-	void noSeEjecutaSinUsosRestantes() {
+	void noSeEjecutaSinUsosRestantes() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new HechiceroDelVacio(1, "Nébula");
 		Combatiente objetivo = new MonjeDelCuerpoCelestial(2, "Kael");
@@ -86,13 +87,13 @@ class CorteDeLosMilAmaneceresTest {
 
 		assertEquals(0, ejecutor.usosRestantes(corte));
 		assertTrue(objetivo.puedeSerObjetivo());
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 		assertEquals(vidaAntes, objetivo.getVidaActual());
 		assertEquals(energiaAntes, ejecutor.getEnergiaActual());
 	}
 
 	@Test
-	void descuentaEnergiaYUsosAlEjecutarse() {
+	void descuentaEnergiaYUsosAlEjecutarse() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new CultivadorDeLaEspada(1, "Aurelio");
 		Combatiente objetivo = new CultivadorDeLaEspada(2, "Rival");
@@ -108,7 +109,7 @@ class CorteDeLosMilAmaneceresTest {
 	}
 
 	@Test
-	void noSeEjecutaSiElEjecutorNoConoceLaTecnica() {
+	void noSeEjecutaSiElEjecutorNoConoceLaTecnica() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new CultivadorDeLaEspada(1, "Aurelio");
 		Combatiente objetivo = new CultivadorDeLaEspada(2, "Rival");
@@ -116,13 +117,13 @@ class CorteDeLosMilAmaneceresTest {
 		ejecutor.prepararParaCombate();
 		objetivo.prepararParaCombate();
 
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 		assertEquals(Combatiente.VIDA_INICIAL, objetivo.getVidaActual());
 		assertEquals(Combatiente.ENERGIA_INICIAL, ejecutor.getEnergiaActual());
 	}
 
 	@Test
-	void noSeEjecutaSiElObjetivoEstaFueraDeCombateYNoConsumeRecursos() {
+	void noSeEjecutaSiElObjetivoEstaFueraDeCombateYNoConsumeRecursos() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new CultivadorDeLaEspada(1, "Aurelio");
 		Combatiente objetivo = new CultivadorDeLaEspada(2, "Rival");
@@ -132,13 +133,13 @@ class CorteDeLosMilAmaneceresTest {
 		objetivo.prepararParaCombate();
 		objetivo.recibirDanio(Combatiente.VIDA_INICIAL);
 
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 		assertEquals(Combatiente.ENERGIA_INICIAL, ejecutor.getEnergiaActual());
 		assertEquals(Combatiente.USOS_POR_TECNICA, ejecutor.usosRestantes(corte));
 	}
 
 	@Test
-	void noSeEjecutaSiElEjecutorEstaFueraDeCombate() {
+	void noSeEjecutaSiElEjecutorEstaFueraDeCombate() throws TecnicaNoDisponibleException{
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new CultivadorDeLaEspada(1, "Aurelio");
 		Combatiente objetivo = new CultivadorDeLaEspada(2, "Rival");
@@ -148,13 +149,13 @@ class CorteDeLosMilAmaneceresTest {
 		objetivo.prepararParaCombate();
 		ejecutor.recibirDanio(Combatiente.VIDA_INICIAL);
 
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 		assertEquals(Combatiente.VIDA_INICIAL, objetivo.getVidaActual());
 		assertEquals(Combatiente.USOS_POR_TECNICA, ejecutor.usosRestantes(corte));
 	}
 
 	@Test
-	void losUsosSeConservanEntreCombatesMientrasVidaYEnergiaSeRecuperan() {
+	void losUsosSeConservanEntreCombatesMientrasVidaYEnergiaSeRecuperan() throws TecnicaNoDisponibleException {
 		CorteDeLosMilAmaneceres corte = new CorteDeLosMilAmaneceres();
 		Combatiente ejecutor = new HechiceroDelVacio(1, "Nébula");
 		Combatiente objetivo = new MonjeDelCuerpoCelestial(2, "Kael");
@@ -190,6 +191,8 @@ class CorteDeLosMilAmaneceresTest {
 		ejecutor.recuperarEnergia(15);
 
 		assertEquals(0, ejecutor.usosRestantes(corte));
-		assertThrows(IllegalStateException.class, () -> ejecutor.usarTecnica(corte, objetivo));
+		assertThrows(TecnicaNoDisponibleException.class, () -> ejecutor.usarTecnica(corte, objetivo));
 	}
+	
+
 }

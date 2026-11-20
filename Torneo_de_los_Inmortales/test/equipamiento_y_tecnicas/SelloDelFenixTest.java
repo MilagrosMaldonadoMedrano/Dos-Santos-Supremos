@@ -6,11 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import combatiente.Combatiente;
 import combatiente.CultivadorDeLaEspada;
+import excepciones.EquipamientoInvalidoException;
 
 class SelloDelFenixTest {
 
 	@Test
-	void alQuitarEquipamientoQueSubeVidaMaximaLaVidaActualSeRecorta() {
+	void alQuitarEquipamientoQueSubeVidaMaximaLaVidaActualSeRecorta() throws EquipamientoInvalidoException {
 		Combatiente combatiente = new CultivadorDeLaEspada(1, "Aurelio");
 		SelloDelFenix sello = new SelloDelFenix();
 
@@ -29,7 +30,7 @@ class SelloDelFenixTest {
 	}
 
 	@Test
-	void alQuitarEquipamientoConVidaActualMenorAlNuevoMaximoNoSeModificaLaVidaActual() {
+	void alQuitarEquipamientoConVidaActualMenorAlNuevoMaximoNoSeModificaLaVidaActual() throws EquipamientoInvalidoException {
 		Combatiente combatiente = new CultivadorDeLaEspada(1, "Aurelio");
 		SelloDelFenix sello = new SelloDelFenix();
 
