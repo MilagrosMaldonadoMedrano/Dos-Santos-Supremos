@@ -10,7 +10,7 @@ import efectos.Veneno;
  * Técnica ofensiva: cuesta 34 de energía. COMPOSITE: su efecto es un EfectoCompuesto
  * que hace 25 de daño, le quita 15 de energía al rival y lo envenena
  * (BONUS: 5 de daño por turno durante 3 turnos).
- * La usa: el Palacio del Vacío en el main.
+ * La usa: el Palacio del Vacío en los main.
  */
 public class DominioDeLaNada extends Tecnica {
 

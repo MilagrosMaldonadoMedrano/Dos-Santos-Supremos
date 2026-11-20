@@ -5,14 +5,15 @@ import combatiente.Combatiente;
 /*
  * BONUS: efecto temporal que daña al afectado en cada uno de sus turnos. Ignora la
  * armadura y la defensa, y si deja la vida en 0 el combatiente queda fuera de combate.
- * Lo usa: DominioDeLaNada (3 turnos de 5 de daño).
+ * Lo usan: DominioDeLaNada (3 turnos de 5 de daño) y VenenoDeLaSerpiente
+ * (4 turnos de 7 de daño).
  */
 public class Veneno extends EfectoTemporal{
 	private int dañoPorTurno;
 
 	/*
 	 * Crea el veneno con su duración y el daño por turno.
-	 * Lo usa: DominioDeLaNada.
+	 * Lo usan: DominioDeLaNada y VenenoDeLaSerpiente.
 	 */
 	public Veneno(int turnos, int dañoPorTurno){
 		super(turnos);

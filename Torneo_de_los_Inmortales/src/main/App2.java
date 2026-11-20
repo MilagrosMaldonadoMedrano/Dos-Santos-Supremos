@@ -23,7 +23,11 @@ import torneo.Pareja;
 import torneo.Torneo;
 
 /*
- * SE CREO UN EFECTO TEMPORAL DE VENENO PARA PROBAR EL POLIMORFISMO DE LOS COMBATIENTES, YA QUE EL MONJE TIENE UN EFECTO DE REDUCCION DE DANIO.
+ * Escenario 2: el Palacio del Vacío usa Veneno de la Serpiente en lugar de Meditación.
+ * Muestra el BONUS de efectos temporales: el golpe inicial de la técnica pasa por la
+ * defensa del rival (el Monje recibe un 25 % menos y se resta su armadura y el Muro),
+ * pero el veneno ignora todas esas defensas y le saca vida en cada uno de sus turnos.
+ * Así, un Monje con armadura y Muro, inmune a los ataques básicos, igual puede caer.
  */
 
 public class App2 {
@@ -36,7 +40,7 @@ public class App2 {
 		Escuela escuelaDeLaEspada = new Escuela("Escuela de la Espada Celestial",
 				List.of(new CorteDeLosMilAmaneceres(), new RugidoDeLaBestiaPrimordial()),
 				List.of(new EspadaCelestial()));
-		// CAMBIAMOS LAS CURACIONES POR EL VENENO
+		// El Palacio del Vacío cambia Meditación (curación) por Veneno de la Serpiente
 		Escuela palacioDelVacio = new Escuela("Palacio del Vacío",
 				List.of(new DominioDeLaNada(), new VenenoDeLaSerpiente()),
 				List.of(new AnilloEspiritual()));

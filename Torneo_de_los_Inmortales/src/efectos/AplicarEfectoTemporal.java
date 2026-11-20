@@ -6,14 +6,15 @@ import combatiente.Combatiente;
  * COMPOSITE (hoja) y BONUS: efecto que le deja al afectado un efecto temporal
  * (veneno o regeneración). Guarda un efecto "modelo" y cada vez que se aplica le
  * entrega al afectado una copia nueva, para que cada uso cuente sus propios turnos.
- * Lo usan: DominioDeLaNada (veneno) y MeditacionDelInmortal (regeneración).
+ * Lo usan: DominioDeLaNada y VenenoDeLaSerpiente (veneno) y MeditacionDelInmortal
+ * (regeneración).
  */
 public class AplicarEfectoTemporal implements Efecto{
 	private EfectoTemporal prototipo;   // efecto modelo que se copia en cada uso
 
 	/*
 	 * Guarda el efecto temporal que se va a copiar.
-	 * Lo usan: DominioDeLaNada y MeditacionDelInmortal.
+	 * Lo usan: DominioDeLaNada, VenenoDeLaSerpiente y MeditacionDelInmortal.
 	 */
 	public AplicarEfectoTemporal(EfectoTemporal efectoTemporal){
 		prototipo = efectoTemporal;

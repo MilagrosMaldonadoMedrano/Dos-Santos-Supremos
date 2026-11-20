@@ -5,7 +5,7 @@ import efectos.Daño;
 /*
  * Técnica ofensiva, el ataque poderoso de la consigna: cuesta 25 de energía y hace
  * 45 de daño al rival.
- * La usa: la Escuela de la Espada Celestial en el main.
+ * La usa: la Escuela de la Espada Celestial en los main.
  */
 public class RugidoDeLaBestiaPrimordial extends Tecnica{
 

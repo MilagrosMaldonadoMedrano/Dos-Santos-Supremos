@@ -23,9 +23,14 @@ import torneo.Pareja;
 import torneo.Torneo;
 
 /*
-*SE VA A PROBAR EQUIPOS CON LOS MISMO EQUIPAMIENTOS Y TECNICAS, PERO CON DIFERENTES COMBATIENTES, PARA VER 
-*SI EL POLIMORFISMO FUNCIONA CORRECTAMENTE Y LA REGLA DEL COMPAÑERO.
-*/
+ * Escenario 3: en las parejas 1, 2 y 3 los dos integrantes vienen de la misma escuela,
+ * así que tienen las mismas técnicas y el mismo equipamiento.
+ * - REGLA DEL COMPAÑERO: como comparten técnicas, se ve que un integrante no puede usar
+ *   la técnica que tiene tomada su compañero.
+ * - POLIMORFISMO: con la misma escuela, el tipo cambia el resultado. Por ejemplo, en la
+ *   pareja 3 el Monje (Kael) recibe un 25 % menos de daño que la Cultivadora (Selene), y
+ *   Tharos es un Monje con las técnicas de la Escuela de la Espada.
+ */
 
 public class App3 {
     public static void main(String[] args) {
@@ -59,7 +64,7 @@ public class App3 {
 			// Observer: el Heraldo y el Cronista se suscriben como interesados.
 			torneo.suscribir(heraldo);
 			torneo.suscribir(cronista);
-             // PRIMEROS 3 EQUIPOS CON LOS MISMOS EQUIPAMIENTOS Y TECNICAS, PERO DIFERENTES COMBATIENTES
+			// Parejas 1, 2 y 3: los dos integrantes son de la misma escuela (mismas técnicas y equipamiento)
 			torneo.inscribir(new Pareja(1, aurelio, darian)); 
 			torneo.inscribir(new Pareja(2, nebula, lyra));
 			torneo.inscribir(new Pareja(3, kael, selene));

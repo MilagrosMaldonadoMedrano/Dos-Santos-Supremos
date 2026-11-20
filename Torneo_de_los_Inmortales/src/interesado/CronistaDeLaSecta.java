@@ -10,7 +10,7 @@ import java.util.Map;
  * OBSERVER: interesado que registra todos los acontecimientos en un historial y, con los
  * resultados, arma la tabla de posiciones. Las pruebas de combate y torneo verifican a
  * través de su historial, no leyendo la pantalla.
- * Lo crean: el main (App) y las pruebas, que lo suscriben al torneo.
+ * Lo crean: los main (App, App2 y App3) y las pruebas, que lo suscriben al torneo.
  */
 public class CronistaDeLaSecta implements Interesado {
 	private final List<Acontecimiento> historial = new ArrayList<>();      // en el orden en que ocurrieron
@@ -74,7 +74,7 @@ public class CronistaDeLaSecta implements Interesado {
 
 	/*
 	 * Devuelve la tabla de posiciones ordenada con Posicion.compareTo.
-	 * Lo usan: el main (App), que se la pasa al Heraldo, y las pruebas.
+	 * Lo usan: los main (App, App2 y App3), que se la pasan al Heraldo, y las pruebas.
 	 */
 	public List<Posicion> tablaDePosiciones() {
 		List<Posicion> tabla = new ArrayList<>(posiciones.values());

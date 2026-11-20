@@ -9,7 +9,7 @@ import java.util.List;
  * Una escuela es solo configuración: un nombre, las técnicas iniciales y el equipamiento
  * inicial que le da a sus combatientes. Agregar una escuela es crear otro objeto, sin
  * escribir código nuevo. No determina el tipo del combatiente.
- * La crean: el main (App) y las pruebas.
+ * La crean: los main (App, App2 y App3) y las pruebas.
  */
 public class Escuela {
 	private String nombre;
@@ -19,7 +19,7 @@ public class Escuela {
 	/*
 	 * Guarda el nombre y copias de las listas (List.copyOf), así nadie puede modificar
 	 * la configuración de la escuela desde afuera una vez creada.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public Escuela(String nombre, List<Tecnica> tecnicas, List<Equipamiento> equipamiento) {
 		this.nombre = nombre;

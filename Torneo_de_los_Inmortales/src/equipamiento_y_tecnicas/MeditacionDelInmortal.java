@@ -8,7 +8,8 @@ import efectos.Regeneracion;
 /*
  * Técnica de recuperación: cuesta 20 de energía. COMPOSITE: cura 20 al instante y deja
  * una regeneración (BONUS: +5 de vida por turno durante 3 turnos).
- * La usan: el Palacio del Vacío y el Monasterio en el main. El criterio la elige
+ * La usan: el Monasterio en los tres main y el Palacio del Vacío en App y App3
+ * (en App2 el Palacio la cambia por Veneno de la Serpiente). El criterio la elige
  * primero si al combatiente le falta vida.
  */
 public class MeditacionDelInmortal extends Tecnica {

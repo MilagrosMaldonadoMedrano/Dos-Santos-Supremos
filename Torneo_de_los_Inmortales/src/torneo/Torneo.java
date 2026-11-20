@@ -17,7 +17,7 @@ import interesado.Proclamacion;
  * Torneo eliminatorio: inscribe parejas, las hace pelear en rondas hasta que queda una
  * sola y la proclama campeona. Se juega solo con 4 u 8 parejas.
  * OBSERVER: tiene un Notificador al que se suscriben los interesados (Heraldo, Cronista).
- * Lo crean: el main (App) y las pruebas.
+ * Lo crean: los main (App, App2 y App3) y las pruebas.
  */
 public class Torneo {
 	private final Set<Pareja> parejas;          // LinkedHashSet: sin repetidos y en orden de inscripción
@@ -28,7 +28,7 @@ public class Torneo {
 
 	/*
 	 * Crea el torneo vacío, con su notificador.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public Torneo() {
 		this.parejas = new LinkedHashSet<>();
@@ -41,7 +41,7 @@ public class Torneo {
 	 * Inscribe una pareja. Rechaza con InscripcionInvalidaException una pareja ya
 	 * inscripta, un combatiente que ya está en otra pareja, o si el torneo ya se jugó.
 	 * Una pareja null es un error de programación (IllegalArgumentException).
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public void inscribir(Pareja p) throws InscripcionInvalidaException {
 		if (p == null)
@@ -61,7 +61,7 @@ public class Torneo {
 	/*
 	 * OBSERVER: suscribe un interesado (Heraldo, Cronista o uno nuevo) sin modificar
 	 * la lógica del torneo.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public void suscribir(Interesado interesado) {
 		notificador.suscribir(interesado);
@@ -72,7 +72,7 @@ public class Torneo {
 	 * que no se haya jugado; si no, lanza TorneoInvalidoException. La primera ronda va en
 	 * orden de inscripción y las siguientes con las ganadoras en orden, hasta que queda
 	 * una sola pareja. Al final avisa la proclamación.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public Pareja iniciar() throws TorneoInvalidoException {
 		if (campeon != null)
@@ -95,7 +95,7 @@ public class Torneo {
 
 	/*
 	 * Devuelve las parejas inscriptas, en orden de inscripción (copia de solo lectura).
-	 * Hoy no lo usa ninguna clase; queda para consultar las inscripciones.
+	 * Lo usa: ParejaTest (verifica que una pareja repetida no se inscribe dos veces).
 	 */
 	public List<Pareja> getParejas() {
 		return List.copyOf(parejas);

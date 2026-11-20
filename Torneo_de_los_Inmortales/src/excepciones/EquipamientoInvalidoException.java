@@ -4,7 +4,7 @@ package excepciones;
  * Se intentó romper una regla del equipamiento: una cuarta pieza, una categoría
  * repetida, cambiar el equipo durante el combate o quitar una pieza que no tiene.
  * La lanzan: Combatiente.equipar y desequipar. La propagan: Escuela.preparar y
- * CreadorCombatiente.crear. La atrapa: el main (App).
+ * CreadorCombatiente.crear. La atrapan: los main (App, App2 y App3).
  */
 public class EquipamientoInvalidoException extends TorneoException {
 	private static final long serialVersionUID = 1L;

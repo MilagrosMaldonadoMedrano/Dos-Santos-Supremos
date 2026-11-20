@@ -4,7 +4,8 @@ import combatiente.Combatiente;
 
 /*
  * COMPOSITE (hoja): efecto que daña al afectado.
- * Lo usan: CorteDeLosMilAmaneceres, RugidoDeLaBestiaPrimordial y DominioDeLaNada.
+ * Lo usan: CorteDeLosMilAmaneceres, RugidoDeLaBestiaPrimordial, DominioDeLaNada y
+ * VenenoDeLaSerpiente.
  */
 public class Daño implements Efecto{
 	private int cantidad;   // daño base de la técnica

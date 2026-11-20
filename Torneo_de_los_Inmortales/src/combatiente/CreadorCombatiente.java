@@ -8,7 +8,7 @@ import excepciones.EquipamientoInvalidoException;
  * el tipo (con una de las constantes de abajo), el nombre y la escuela; nunca conoce la
  * clase concreta ni cómo se arma su preparación. Asigna los identificadores en orden
  * de creación.
- * Lo usan: el main (App) y las pruebas que necesitan combatientes preparados.
+ * Lo usan: los main (App, App2 y App3) y las pruebas que necesitan combatientes preparados.
  */
 public class CreadorCombatiente {
 	public static final String CULTIVADOR = "Cultivador de la Espada";
@@ -22,7 +22,7 @@ public class CreadorCombatiente {
 	 * a la escuela que lo prepare (le enseña las técnicas y le equipa las piezas).
 	 * Devuelve el combatiente como Combatiente, sin mostrar su clase concreta.
 	 * Si la escuela no puede equiparlo, lanza EquipamientoInvalidoException.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public Combatiente crear(String tipo, String nombre, Escuela escuela)throws EquipamientoInvalidoException {
 		Combatiente nuevo = instanciar(tipo, proximoId, nombre);

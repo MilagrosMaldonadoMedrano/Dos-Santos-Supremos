@@ -10,15 +10,15 @@ import java.util.ArrayList;
  * COMPOSITE: efecto que agrupa otros efectos y los aplica uno por uno, en el orden en
  * que se agregaron. Permite armar técnicas que hacen varias cosas a la vez sin crear
  * clases nuevas de efecto.
- * Lo usan: DominioDeLaNada (daño, drenar energía y veneno) y MeditacionDelInmortal
- * (curación y regeneración).
+ * Lo usan: DominioDeLaNada (daño, drenar energía y veneno), VenenoDeLaSerpiente
+ * (daño y veneno) y MeditacionDelInmortal (curación y regeneración).
  */
 public class EfectoCompuesto implements Efecto{
 	private List<Efecto> efectos;   // lista porque solo se agregan y se recorren en orden
 
 	/*
 	 * Crea el compuesto sin efectos; se agregan con agregar.
-	 * Lo usan: DominioDeLaNada y MeditacionDelInmortal.
+	 * Lo usan: DominioDeLaNada, VenenoDeLaSerpiente y MeditacionDelInmortal.
 	 */
 	public EfectoCompuesto () {
 		efectos = new ArrayList<Efecto>();
@@ -26,7 +26,8 @@ public class EfectoCompuesto implements Efecto{
 
 	/*
 	 * Suma un efecto (simple o compuesto) al grupo.
-	 * Lo usan: el crearEfectoCompuesto de DominioDeLaNada y de MeditacionDelInmortal.
+	 * Lo usan: el crearEfectoCompuesto de DominioDeLaNada, VenenoDeLaSerpiente y
+	 * MeditacionDelInmortal.
 	 */
 	public void agregar(Efecto efecto) {
 		efectos.add(efecto);

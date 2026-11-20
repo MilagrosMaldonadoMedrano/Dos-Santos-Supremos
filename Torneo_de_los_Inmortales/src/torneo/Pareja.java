@@ -19,7 +19,7 @@ import equipamiento_y_tecnicas.Tecnica;
  * los integrantes en pie, ordenados por id (lo hace IteradorEnPie).
  * También lleva la regla del compañero: qué integrante tiene tomada cada técnica.
  * Una pareja no conoce a las otras parejas.
- * La crean: el main (App) y las pruebas.
+ * La crean: los main (App, App2 y App3) y las pruebas (ParejaTest, CombateTest...).
  */
 public class Pareja implements Iterable<Combatiente> {
 	private final int id;
@@ -30,7 +30,7 @@ public class Pareja implements Iterable<Combatiente> {
 	 * Crea la pareja con su id y sus dos combatientes, ordenados por id (dentro de la
 	 * pareja actúa primero el de menor id). Si alguno es null o son el mismo, lanza
 	 * IllegalArgumentException.
-	 * Lo usan: el main (App) y las pruebas.
+	 * Lo usan: los main (App, App2 y App3) y las pruebas.
 	 */
 	public Pareja(int id, Combatiente a, Combatiente b) {
 		if (a == null || b == null || a.equals(b)) {
@@ -80,7 +80,7 @@ public class Pareja implements Iterable<Combatiente> {
 	/*
 	 * Suma la vida actual de los dos integrantes; un caído suma 0.
 	 * Lo usan: Combate.ganadorPorVida (desempate al llegar al límite de asaltos)
-	 * y ResultadoCombate (vida total de cada pareja al terminar).
+	 * ResultadoCombate (vida total de cada pareja al terminar) y AcontecimientoTest.
 	 */
 	public int vidaTotal() {
 		int vidaTotal = 0;
@@ -93,7 +93,8 @@ public class Pareja implements Iterable<Combatiente> {
 	/*
 	 * REGLA DEL COMPAÑERO: devuelve las técnicas que c NO puede usar porque las tiene
 	 * tomadas su compañero, mientras el compañero siga en pie y le queden usos de ella.
-	 * Lo usa: Combate.actuar, que le pasa el resultado a combatiente.elegirTecnica.
+	 * Lo usan: Combate.actuar, que le pasa el resultado a combatiente.elegirTecnica,
+	 * y ParejaTest.
 	 */
 	public Set<Tecnica> tecnicasBloqueadasPara(Combatiente c) {
 		validarIntegrante(c);
@@ -108,7 +109,7 @@ public class Pareja implements Iterable<Combatiente> {
 
 	/*
 	 * REGLA DEL COMPAÑERO: indica si c puede usar una técnica puntual (si no está bloqueada).
-	 * Hoy no lo usa ninguna clase: el combate trabaja con tecnicasBloqueadasPara.
+	 * Lo usa: ParejaTest. El combate no lo necesita: trabaja con tecnicasBloqueadasPara.
 	 */
 	public boolean puedeUsar(Combatiente c, Tecnica t) {
 		return !tecnicasBloqueadasPara(c).contains(t);
@@ -117,7 +118,7 @@ public class Pareja implements Iterable<Combatiente> {
 	/*
 	 * REGLA DEL COMPAÑERO: registra que c usó la técnica t. Si nadie la tenía tomada, o el
 	 * que la tenía ya no la bloquea (cayó o se quedó sin usos), pasa a ser de c.
-	 * Lo usa: Combate.actuar, después de que la técnica se usó con éxito.
+	 * Lo usan: Combate.actuar, después de que la técnica se usó con éxito, y ParejaTest.
 	 */
 	public void registrarUso(Combatiente c, Tecnica t) {
 		validarIntegrante(c);
@@ -138,7 +139,7 @@ public class Pareja implements Iterable<Combatiente> {
 	/*
 	 * Al comenzar cada combate: reinicia la regla del compañero y prepara a los dos
 	 * integrantes (vida y energía al máximo, estado EnPie).
-	 * Lo usa: Combate.jugar.
+	 * Lo usan: Combate.jugar y ParejaTest.
 	 */
 	public void prepararParaCombate() {
 		tecnicasEnUso.clear();
@@ -150,7 +151,7 @@ public class Pareja implements Iterable<Combatiente> {
 	/*
 	 * Al terminar el combate: borra la regla del compañero y los dos integrantes vuelven
 	 * a Preparado.
-	 * Lo usa: Combate.jugar.
+	 * Lo usan: Combate.jugar y ParejaTest.
 	 */
 	public void finalizarCombate() {
 		tecnicasEnUso.clear();

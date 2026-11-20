@@ -8,14 +8,14 @@ import java.util.Objects;
  * OBSERVER: interesado que presenta los acontecimientos por pantalla. Es la ÚNICA clase
  * del sistema que escribe en pantalla, incluido lo que muestra el main.
  * ADAPTER: adapta los acontecimientos del torneo al PrintStream de Java (System.out).
- * Lo crea: el main (App), que lo suscribe al torneo.
+ * Lo crean: los main (App, App2 y App3), que lo suscriben al torneo.
  */
 public class HeraldoImperial implements Interesado {
 	private final PrintStream salida;   // donde escribe (System.out en el main)
 
 	/*
 	 * Guarda la salida donde va a escribir. Si es null, lanza NullPointerException.
-	 * Lo usa: el main (App).
+	 * Lo usan: los main (App, App2 y App3).
 	 */
 	public HeraldoImperial(PrintStream salida) {
 		this.salida = Objects.requireNonNull(salida, "La salida no puede ser null");
@@ -70,7 +70,7 @@ public class HeraldoImperial implements Interesado {
 
 	/*
 	 * Muestra la tabla de posiciones numerada.
-	 * Lo usa: el main (App), con la tabla que le pide al Cronista.
+	 * Lo usan: los main (App, App2 y App3), con la tabla que le piden al Cronista.
 	 */
 	public void presentarTabla(List<Posicion> tabla) {
 		salida.println();
@@ -84,7 +84,7 @@ public class HeraldoImperial implements Interesado {
 
 	/*
 	 * Muestra un mensaje suelto, por ejemplo un error atrapado en un catch.
-	 * Lo usa: el main (App).
+	 * Lo usan: los main (App, App2 y App3).
 	 */
 	public void anunciar(String mensaje) {
 		salida.println(mensaje);
