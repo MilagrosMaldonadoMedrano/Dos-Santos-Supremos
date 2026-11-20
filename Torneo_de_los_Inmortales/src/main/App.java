@@ -1,7 +1,5 @@
 package main;
 
-import java.util.List;
-
 import combatiente.Combatiente;
 import combatiente.CreadorCombatiente;
 import equipamiento_y_tecnicas.AnilloEspiritual;
@@ -19,6 +17,7 @@ import excepciones.InscripcionInvalidaException;
 import excepciones.TorneoInvalidoException;
 import interesado.CronistaDeLaSecta;
 import interesado.HeraldoImperial;
+import java.util.List;
 import torneo.Pareja;
 import torneo.Torneo;
 
